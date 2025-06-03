@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "303210718086",
+    "project_id": "welcome-task-app-2025",
+    "storage_bucket": "welcome-task-app-2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303210718086:android:bfd709cb7e0c7eb9ee4207",
+        "android_client_info": {
+          "package_name": "com.example.well_task_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaPeB4VzUk0rAVm6AKrPsvw3d5C8kSGiQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
