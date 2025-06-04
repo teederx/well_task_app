@@ -28,12 +28,10 @@ class _DatePickerScreenState extends ConsumerState<DatePickerScreen> {
 
   void _scrollToSelectedDate() {
     final selectedDate = ref.read(selectedDateProvider);
-    final now = DateTime.now();
-    final difference = selectedDate.difference(now).inDays;
+    final baseDate = DateTime.now().subtract(const Duration(days: 10));
+    final index = selectedDate.difference(baseDate).inDays;
 
-    // Cap index to [0, 29] range
-    final index = difference.clamp(0, 29);
-    final offset = index * 60.w; // Adjust based on item width + margin
+    final offset = index * 60.w; // Adjust if item width or spacing is different
 
     _scrollController.animateTo(
       offset,
@@ -59,8 +57,10 @@ class _DatePickerScreenState extends ConsumerState<DatePickerScreen> {
     final selectedDate = ref.watch(selectedDateProvider);
 
     final List<DateTime> dates = List.generate(
-      30,
-      (index) => DateTime.now().add(Duration(days: index)),
+      41, // total of 10 past + today + 30 future = 41 days
+      (index) => DateTime.now()
+          .subtract(const Duration(days: 10))
+          .add(Duration(days: index)),
     );
 
     final formattedSelectedDate = DateFormat('yyyy-MM-dd').format(selectedDate);

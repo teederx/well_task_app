@@ -18,10 +18,28 @@ class TaskList extends _$TaskList {
     return _getTasks();
   }
 
-  Future<List<TaskModel>> _getTasks() {
+  Future<List<TaskModel>> _getTasks() async {
     final taskRepo = ref.read(tasksRepositoryProvider);
     final getTasksUsecase = GetTasksUsecase(taskRepo);
-    return getTasksUsecase.call();
+    final removeTaskUsecase = RemoveTaskUsecase(taskRepo);
+
+    final allTasks = await getTasksUsecase.call();
+
+    final thresholdDate = DateTime.now().subtract(const Duration(days: 10));
+
+    final filteredTasks = <TaskModel>[];
+
+    for (final task in allTasks) {
+      if (task.dueDate.isBefore(thresholdDate)) {
+        // If the task is older than 10 days, remove it from database
+        await removeTaskUsecase.call(id: task.id);
+      } else {
+        // Otherwise, keep the task
+        filteredTasks.add(task);
+      }
+    }
+
+    return filteredTasks;
   }
 
   Future<void> addTask({
