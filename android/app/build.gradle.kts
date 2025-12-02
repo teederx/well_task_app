@@ -29,7 +29,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         multiDexEnabled = true
-        minSdk = 23 // flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion // flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
