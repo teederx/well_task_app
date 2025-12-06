@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../utils/constants/firebase_constants.dart';
 import '../../models/app_user/app_user_model.dart';
+import '../../models/custom_error_model.dart';
 import '../handle_exception.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -13,7 +14,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> changePassword({required String password}) async {
     try {
-      await currentUser!.updatePassword(password);
+      final user = currentUser;
+      if (user == null) {
+        throw CustomErrorModel(
+          code: 'Auth Error',
+          message: 'User not logged in',
+        );
+      }
+      await user.updatePassword(password);
     } catch (e) {
       throw handleException(e);
     }
@@ -25,11 +33,18 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
+      final user = currentUser;
+      if (user == null) {
+        throw CustomErrorModel(
+          code: 'Auth Error',
+          message: 'User not logged in',
+        );
+      }
       final credential = EmailAuthProvider.credential(
         email: email,
         password: password,
       );
-      await currentUser!.reauthenticateWithCredential(credential);
+      await user.reauthenticateWithCredential(credential);
     } catch (e) {
       throw handleException(e);
     }
@@ -41,7 +56,14 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> reloadUser() async {
     try {
-      await currentUser!.reload();
+      final user = currentUser;
+      if (user == null) {
+        throw CustomErrorModel(
+          code: 'Auth Error',
+          message: 'User not logged in',
+        );
+      }
+      await user.reload();
     } catch (e) {
       throw handleException(e);
     }
@@ -64,7 +86,10 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       final signedInUser = userCredential.user;
-      final userId = signedInUser!.uid;
+      if (signedInUser == null) {
+        throw CustomErrorModel(code: 'Auth Error', message: 'Sign in failed');
+      }
+      final userId = signedInUser.uid;
 
       // Fetch user document from Firestore
       final userDoc = await usersCollection.doc(userId).get();
@@ -122,8 +147,11 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
       final signedInUser = userCredential.user;
+      if (signedInUser == null) {
+        throw CustomErrorModel(code: 'Auth Error', message: 'Sign up failed');
+      }
 
-      await usersCollection.doc(signedInUser!.uid).set({
+      await usersCollection.doc(signedInUser.uid).set({
         'name': name,
         'email': email,
         'phone': phone,

@@ -5,7 +5,8 @@ import 'dart:io';
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as fln;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:well_task_app/utils/config/formatted_date_time.dart';
@@ -21,6 +22,7 @@ abstract class AlarmServices {
     required String title,
     required String desc,
     required BuildContext context,
+    bool remind5MinEarly = false,
   });
 
   Future<void> cancelTaskNotification({
@@ -44,31 +46,68 @@ class AlarmServicesImpl implements AlarmServices {
     required String title,
     required String? desc,
     required BuildContext context,
+    bool remind5MinEarly = false,
   }) async {
     if (title.isEmpty) return;
 
     await checkAndPromptExactAlarmPermission();
 
+    // Schedule the main notification
     await _lNS.flutterLocalNotificationsPlugin.zonedSchedule(
       notificationId,
       title,
       desc,
       tz.TZDateTime.from(dateTime, tz.local),
-      NotificationDetails(
-        android: AndroidNotificationDetails(
+      fln.NotificationDetails(
+        android: fln.AndroidNotificationDetails(
           'task_channel_id',
           'Task Reminders',
           channelDescription: 'Scheduled task notifications',
-          importance: Importance.max,
-          priority: Priority.high,
+          importance: fln.Importance.max,
+          priority: fln.Priority.high,
           ongoing: true,
-          audioAttributesUsage: AudioAttributesUsage.alarm,
+          audioAttributesUsage: fln.AudioAttributesUsage.alarm,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: fln.DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
       ),
       payload: id,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
     );
+
+    // Schedule 5-minute early reminder if requested
+    if (remind5MinEarly) {
+      final earlyDate = dateTime.subtract(const Duration(minutes: 5));
+      if (earlyDate.isAfter(DateTime.now())) {
+        await _lNS.flutterLocalNotificationsPlugin.zonedSchedule(
+          notificationId + 100000, // Offset ID for early reminder
+          'Upcoming Task: $title',
+          'Due in 5 minutes',
+          tz.TZDateTime.from(earlyDate, tz.local),
+          fln.NotificationDetails(
+            android: fln.AndroidNotificationDetails(
+              'task_channel_id',
+              'Task Reminders',
+              channelDescription: 'Scheduled task notifications',
+              importance: fln.Importance.max,
+              priority: fln.Priority.high,
+              ongoing: true,
+              audioAttributesUsage: fln.AudioAttributesUsage.alarm,
+            ),
+            iOS: fln.DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
+          ),
+          payload: id,
+          androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
+        );
+      }
+    }
 
     _showSnackBar(context, 'Scheduled "$title" for ${formatTime(dateTime)}');
   }
@@ -85,6 +124,11 @@ class AlarmServicesImpl implements AlarmServices {
     final isScheduled = await _isNotificationScheduled(notificationId);
     if (isScheduled) {
       await _lNS.flutterLocalNotificationsPlugin.cancel(notificationId);
+      // Also try to cancel the early reminder
+      await _lNS.flutterLocalNotificationsPlugin.cancel(
+        notificationId + 100000,
+      );
+
       _showSnackBar(
         context,
         'Cancelled scheduled task: "$title" for ${formatTime(dateTime)}',

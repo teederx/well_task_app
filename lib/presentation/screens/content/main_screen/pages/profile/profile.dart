@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:well_task_app/presentation/screens/auth/change_password_page.dart';
+import 'package:well_task_app/presentation/screens/content/insights_page/insights_page.dart';
 
 import '../../../../../../data/models/custom_error_model.dart';
 import '../../../../../../utils/config/show_confirm_dialog.dart';
@@ -12,6 +13,7 @@ import '../../widget/show_custom_dialog.dart';
 import 'widget/about_us.dart';
 import 'widget/profile_head.dart';
 import 'widget/profile_tile.dart';
+import '../../../stats_page/stats_page.dart';
 
 class Profile extends ConsumerWidget {
   const Profile({super.key});
@@ -75,6 +77,32 @@ class Profile extends ConsumerWidget {
                   ),
                   5.verticalSpace,
                   ProfileTile(
+                    icon: Icons.bar_chart_rounded,
+                    title: 'Statistics',
+                    onTap:
+                        () => showCustomDialog(
+                          context: context,
+                          barrierLabel: 'Statistics',
+                          child: const StatsPage(),
+                          height: 0.9,
+                        ),
+                    index: 3,
+                  ),
+                  5.verticalSpace,
+                  ProfileTile(
+                    icon: Icons.auto_awesome_rounded,
+                    title: 'AI Insights',
+                    onTap:
+                        () => showCustomDialog(
+                          context: context,
+                          barrierLabel: 'AI Insights',
+                          child: const InsightsPage(),
+                          height: 0.9,
+                        ),
+                    index: 4,
+                  ),
+                  5.verticalSpace,
+                  ProfileTile(
                     icon: Icons.info_outline_rounded,
                     title: 'About Us',
                     onTap:
@@ -84,7 +112,7 @@ class Profile extends ConsumerWidget {
                           child: const AboutUs(),
                           height: 0.65,
                         ),
-                    index: 3,
+                    index: 5,
                   ),
                   5.verticalSpace,
                   ProfileTile(
@@ -92,7 +120,7 @@ class Profile extends ConsumerWidget {
                     title: 'Change Password',
                     onTap:
                         () => context.pushNamed(ChangePasswordPage.routeName),
-                    index: 4,
+                    index: 6,
                   ),
                   5.verticalSpace,
                   ProfileTile(
@@ -107,7 +135,7 @@ class Profile extends ConsumerWidget {
                               () =>
                                   ref.read(signOutProvider.notifier).signOut(),
                         ),
-                    index: 5,
+                    index: 7,
                   ),
                 ],
               ),

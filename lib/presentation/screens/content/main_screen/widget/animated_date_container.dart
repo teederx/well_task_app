@@ -20,24 +20,19 @@ class AnimatedDateContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: AppTheme.normalAnimation,
+        curve: Curves.easeOutCubic,
         margin: EdgeInsets.symmetric(horizontal: 4.w),
         height: isSelected ? 100.h : 90.h,
         width: 60.w,
         padding: EdgeInsets.symmetric(vertical: 10.h),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.purple : Colors.white,
+          gradient: isSelected ? AppTheme.purpleGradient : null,
+          color: isSelected ? null : Colors.white,
           borderRadius: BorderRadius.circular(isSelected ? 20.r : 12.r),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  isSelected
-                      ? AppTheme.purple.withAlpha(40)
-                      : Colors.black.withAlpha(40),
-              blurRadius: isSelected ? 8 : 4,
-              offset: const Offset(0, 0),
-            ),
-          ],
+          boxShadow:
+              isSelected ? AppTheme.purpleGlowShadow : AppTheme.cardShadow,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -51,13 +46,24 @@ class AnimatedDateContainer extends StatelessWidget {
               ),
             ),
             4.verticalSpace,
-            Text(
-              DateFormat.d().format(date),
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 24.sp,
-                color: isSelected ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
+            TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.8, end: 1.0),
+              duration: AppTheme.mediumAnimation,
+              curve: Curves.elasticOut,
+              builder: (context, scale, child) {
+                return Transform.scale(
+                  scale: isSelected ? scale : 1.0,
+                  child: child,
+                );
+              },
+              child: Text(
+                DateFormat.d().format(date),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 24.sp,
+                  color: isSelected ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             4.verticalSpace,

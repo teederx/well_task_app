@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/data/models/task_model/task_model.dart';
 
+import '../../../../providers/tasks_providers/task_filter/task_filter_provider.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../widget/all_tasks.dart';
 import '../widget/custom_appbar.dart';
 import '../widget/date_picker.dart';
+import '../widget/filter_bar.dart';
+import '../widget/skeleton_list.dart';
 
 class Tasks extends ConsumerWidget {
   const Tasks({super.key});
@@ -31,7 +34,7 @@ class Tasks extends ConsumerWidget {
       );
     });
 
-    final tasksListState = ref.watch(taskListProvider);
+    final tasksListState = ref.watch(filteredTaskListProvider);
 
     return tasksListState.when(
       data: (tasksList) {
@@ -43,10 +46,18 @@ class Tasks extends ConsumerWidget {
                 CustomAppbar(title: 'All Tasks (${tasksList.length})'),
                 5.verticalSpace,
                 DatePickerScreen(),
-                20.verticalSpace,
+                10.verticalSpace,
+                FilterBar(),
+                10.verticalSpace,
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: AllTasks(tasksList: tasksList),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      return ref.refresh(taskListProvider.future);
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: AllTasks(tasksList: tasksList),
+                    ),
                   ),
                 ),
               ],
@@ -54,7 +65,26 @@ class Tasks extends ConsumerWidget {
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
+      loading: () {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            child: Column(
+              children: [
+                CustomAppbar(title: 'All Tasks'),
+                5.verticalSpace,
+                DatePickerScreen(),
+                10.verticalSpace,
+                FilterBar(),
+                10.verticalSpace,
+                Expanded(
+                  child: SingleChildScrollView(child: const SkeletonList()),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
       error: (error, stackTrace) {
         return Center(
           child: Column(

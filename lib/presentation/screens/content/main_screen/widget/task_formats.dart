@@ -13,6 +13,10 @@ List<TaskModel> tasksForDate(DateTime date, List<TaskModel> allTasks) {
   }).toList();
 }
 
+List<TaskModel> tasksForToday(List<TaskModel> allTasks) {
+  final today = DateTime.now();
+  return tasksForDate(today, allTasks);
+}
 
 List<TaskModel> tasksAfterToday(List<TaskModel> allTasks) {
   final today = DateTime.now();
@@ -26,4 +30,8 @@ List<TaskModel> tasksAfterToday(List<TaskModel> allTasks) {
     );
     return taskDateAtMidnight.isAfter(todayAtMidnight) && !task.isCompleted;
   }).toList();
+}
+
+List<TaskModel> getUpcomingTasks(List<TaskModel> allTasks) {
+  return tasksAfterToday(allTasks);
 }

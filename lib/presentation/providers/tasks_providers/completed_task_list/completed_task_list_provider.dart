@@ -7,15 +7,8 @@ import '../task_list/task_list_provider.dart';
 part 'completed_task_list_provider.g.dart';
 
 @riverpod
-List<TaskModel> completedTaskList(Ref ref) {
-  final taskListAsync = ref.watch(taskListProvider);
-
-  return taskListAsync.maybeWhen(
-    data: (taskList) {
-      final completedTasks =
-          taskList.where((task) => task.isCompleted).toList();
-      return completedTasks;
-    },
-    orElse: () => [],
-  );
+@riverpod
+Future<List<TaskModel>> completedTaskList(Ref ref) async {
+  final taskList = await ref.watch(taskListProvider.future);
+  return taskList.where((task) => task.isCompleted).toList();
 }

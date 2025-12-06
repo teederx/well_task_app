@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -8,6 +9,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data_sources/firebase_options.dart';
+import 'presentation/providers/theme_provider.dart';
 import 'utils/config/local_notification_service.dart';
 import 'utils/config/router/route_provider.dart';
 import 'utils/constants/app_theme.dart';
@@ -15,25 +17,42 @@ import 'utils/constants/app_theme.dart';
 LocalNotificationService _localNotificationService = LocalNotificationService();
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  setPathUrlStrategy();
-  await dotenv.load(fileName: '.env');
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  tz.initializeTimeZones();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      setPathUrlStrategy();
+      await dotenv.load(fileName: '.env');
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      tz.initializeTimeZones();
 
-  await _localNotificationService.initialize();
-  await _localNotificationService.requestNotificationPermissions();
+      await _localNotificationService.initialize();
+      await _localNotificationService.requestNotificationPermissions();
 
-  await Hive.initFlutter();
+      await Hive.initFlutter();
 
-  runApp(
-    ProviderScope(
-      /* overrides: [
-        tasksRepositoryProvider.overrideWithValue(TasksRepositoryImpl()),
-        userRepositoryProvider.overrideWithValue(UserRepositoryImpl()),
-      ], */
-      child: const MyApp(),
-    ),
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details);
+        // TODO: Log error to Crashlytics or other service
+        debugPrint('Flutter Error: ${details.exception}');
+      };
+
+      runApp(
+        ProviderScope(
+          /* overrides: [
+          tasksRepositoryProvider.overrideWithValue(TasksRepositoryImpl()),
+          userRepositoryProvider.overrideWithValue(UserRepositoryImpl()),
+        ], */
+          child: const MyApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      // TODO: Log error to Crashlytics or other service
+      debugPrint('Global Error: $error');
+      debugPrint('Stack Trace: $stack');
+    },
   );
 }
 
@@ -43,6 +62,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeNotifierProvider);
 
     return ScreenUtilInit(
       designSize: const Size(360, 690),
@@ -51,7 +71,9 @@ class MyApp extends ConsumerWidget {
       builder: (_, child) {
         return MaterialApp.router(
           title: 'Well Task App',
-          theme: AppTheme.theme,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
           debugShowCheckedModeBanner: false,
           routerConfig: router,
         );
