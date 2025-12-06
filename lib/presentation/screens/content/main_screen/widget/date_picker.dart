@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:well_task_app/utils/config/haptic_service.dart';
 
 import '../../../../providers/tasks_providers/selected_date/selected_date_provider.dart';
 import 'animated_date_container.dart';
@@ -91,6 +92,7 @@ class _DatePickerScreenState extends ConsumerState<DatePickerScreen> {
               date: date,
               isSelected: isSelected,
               onTap: () {
+                HapticService.selectionClick();
                 ref.read(selectedDateProvider.notifier).setDate(date);
                 _scrollToSelectedDate(); // scroll to date on tap
               },

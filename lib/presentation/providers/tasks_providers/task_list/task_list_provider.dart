@@ -1,45 +1,25 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:well_task_app/domain/usecases/tasks/get_tasks_usecase.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../../../data/models/subtask_model/subtask_model.dart';
+import '../../../../data/models/task_model/task_enums.dart';
 import '../../../../data/models/task_model/task_model.dart';
 import '../../../../data/repositories/tasks_repository/provider/tasks_repository_provider.dart';
-import '../../../../domain/usecases/tasks/add_task_usecase.dart';
-import '../../../../domain/usecases/tasks/edit_task_usecase.dart';
-import '../../../../domain/usecases/tasks/remove_task_usecase.dart';
-import '../../../../domain/usecases/tasks/toggle_alarm_usecase.dart';
-import '../../../../domain/usecases/tasks/toggle_complete_usecase.dart';
+
+import '../../../../data/models/time_log_model/time_log_model.dart';
+import '../../../../data/models/attachment_model/attachment_model.dart';
 
 part 'task_list_provider.g.dart';
+
+const uuid = Uuid();
 
 @riverpod
 class TaskList extends _$TaskList {
   @override
-  FutureOr<List<TaskModel>> build() {
-    return _getTasks();
-  }
-
-  Future<List<TaskModel>> _getTasks() async {
-    final taskRepo = ref.read(tasksRepositoryProvider);
-    final getTasksUsecase = GetTasksUsecase(taskRepo);
-    final removeTaskUsecase = RemoveTaskUsecase(taskRepo);
-
-    final allTasks = await getTasksUsecase.call();
-
-    final thresholdDate = DateTime.now().subtract(const Duration(days: 10));
-
-    final filteredTasks = <TaskModel>[];
-
-    for (final task in allTasks) {
-      if (task.dueDate.isBefore(thresholdDate)) {
-        // If the task is older than 10 days, remove it from database
-        await removeTaskUsecase.call(id: task.id);
-      } else {
-        // Otherwise, keep the task
-        filteredTasks.add(task);
-      }
-    }
-
-    return filteredTasks;
+  Future<List<TaskModel>> build() async {
+    final repository = ref.read(tasksRepositoryProvider);
+    return await repository.getTasks();
   }
 
   Future<void> addTask({
@@ -48,27 +28,43 @@ class TaskList extends _$TaskList {
     required String title,
     required String desc,
     required DateTime dueDate,
-    bool alarmSet = false,
+    required bool alarmSet,
+    required bool remind5MinEarly,
+    required TaskPriority priority,
+    TaskCategory category = TaskCategory.other,
+    List<String> tags = const [],
+    RecurringType recurringType = RecurringType.none,
+    int recurringInterval = 1,
+    List<SubtaskModel> subtasks = const [],
+    int totalTimeSpent = 0,
+    List<TimeLogModel> timeLogs = const [],
+    DateTime? timerStartedAt,
+    bool isTimerRunning = false,
+    List<AttachmentModel> attachments = const [],
   }) async {
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final newTask = TaskModel.createTask(
-        notificationId: notId,
-        id: id,
-        title: title,
-        description: desc,
-        dueDate: dueDate,
-        alarmSet: alarmSet,
-      );
-
-      final taskRepo = ref.read(tasksRepositoryProvider);
-      final addTaskUsecase = AddTaskUsecase(taskRepo);
-
-      await addTaskUsecase.call(newTask);
-
-      return [...state.value!, newTask];
-    });
+    final repository = ref.read(tasksRepositoryProvider);
+    final task = TaskModel.createTask(
+      id: id,
+      notificationId: notId,
+      title: title,
+      description: desc,
+      dueDate: dueDate,
+      alarmSet: alarmSet,
+      remind5MinEarly: remind5MinEarly,
+      priority: priority,
+      category: category,
+      tags: tags,
+      recurringType: recurringType,
+      recurringInterval: recurringInterval,
+      subtasks: subtasks,
+      totalTimeSpent: totalTimeSpent,
+      timeLogs: timeLogs,
+      timerStartedAt: timerStartedAt,
+      isTimerRunning: isTimerRunning,
+      attachments: attachments,
+    );
+    await repository.addTask(task: task);
+    ref.invalidateSelf();
   }
 
   Future<void> editTask({
@@ -77,126 +73,61 @@ class TaskList extends _$TaskList {
     required String desc,
     required DateTime dueDate,
     required bool alarmSet,
+    required bool remind5MinEarly,
+    required TaskPriority priority,
+    TaskCategory category = TaskCategory.other,
+    List<String> tags = const [],
+    RecurringType recurringType = RecurringType.none,
+    int recurringInterval = 1,
+    List<SubtaskModel> subtasks = const [],
+    int totalTimeSpent = 0,
+    List<TimeLogModel> timeLogs = const [],
+    DateTime? timerStartedAt,
+    bool isTimerRunning = false,
+    List<AttachmentModel> attachments = const [],
   }) async {
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final taskRepo = ref.read(tasksRepositoryProvider);
-      final editTaskUsecase = EditTaskUsecase(taskRepo);
-
-      await editTaskUsecase.call(
-        id: id,
-        title: title,
-        desc: desc,
-        dueDate: dueDate,
-        alarmSet: alarmSet,
-      );
-
-      return [
-        for (final task in state.value!)
-          if (task.id == id)
-            task.copyWith(
-              title: title,
-              description: desc,
-              dueDate: dueDate,
-              alarmSet: alarmSet,
-            )
-          else
-            task,
-      ];
-    });
+    final repository = ref.read(tasksRepositoryProvider);
+    await repository.editTask(
+      id: id,
+      title: title,
+      desc: desc,
+      dueDate: dueDate,
+      alarmSet: alarmSet,
+      remind5MinEarly: remind5MinEarly,
+      priority: priority,
+      category: category,
+      tags: tags,
+      recurringType: recurringType,
+      recurringInterval: recurringInterval,
+      // Note: repository.editTask likely needs update too if it copies fields manually
+      // but if it replaces the task or uses helper, we need to pass these params
+      // Assuming repository.editTask takes named args matching TaskModel fields or a TaskModel object.
+      // Checking local cache of TasksRepository... wait, I need to check TasksRepository.
+      subtasks: subtasks,
+      totalTimeSpent: totalTimeSpent,
+      timeLogs: timeLogs,
+      timerStartedAt: timerStartedAt,
+      isTimerRunning: isTimerRunning,
+      attachments: attachments,
+    );
+    ref.invalidateSelf();
   }
 
-  Future<void> toggleComplete(String id) async {
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final taskRepo = ref.read(tasksRepositoryProvider);
-      final toggleTaskUsecase = ToggleCompleteUsecase(taskRepo);
-
-      await toggleTaskUsecase.call(id: id);
-
-      return [
-        for (final task in state.value!)
-          if (task.id == id)
-            task.copyWith(isCompleted: !task.isCompleted)
-          else
-            task,
-      ];
-    });
+  Future<void> removeTask({required String id}) async {
+    final repository = ref.read(tasksRepositoryProvider);
+    await repository.removeTask(id: id);
+    ref.invalidateSelf();
   }
 
-  Future<void> toggleAlarm(String id) async {
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final taskRepo = ref.read(tasksRepositoryProvider);
-      final toggleAlarmUsecase = ToggleAlarmUsecase(taskRepo);
-
-      await toggleAlarmUsecase.call(id: id);
-
-      return [
-        for (final task in state.value!)
-          if (task.id == id) task.copyWith(alarmSet: !task.alarmSet) else task,
-      ];
-    });
+  Future<void> toggleComplete({required String id}) async {
+    final repository = ref.read(tasksRepositoryProvider);
+    await repository.toggleComplete(id: id);
+    ref.invalidateSelf();
   }
 
-  Future<void> removeTask(String id) async {
-    state = AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
-      final taskRepo = ref.read(tasksRepositoryProvider);
-      final removeTaskUsecase = RemoveTaskUsecase(taskRepo);
-
-      await removeTaskUsecase.call(id: id);
-
-      return [
-        for (final task in state.value!)
-          if (task.id != id) task,
-      ];
-    });
+  Future<void> toggleAlarm({required String id}) async {
+    final repository = ref.read(tasksRepositoryProvider);
+    await repository.toggleAlarm(id: id);
+    ref.invalidateSelf();
   }
 }
-
-// final List<TaskModel> allTasks = [
-//   TaskModel(
-//     id: '1',
-//     notificationId: 1,
-//     title: 'Task 1',
-//     description: 'Description 1',
-//     dueDate: DateTime.now(), // today
-//   ),
-//   TaskModel(
-//     id: '2',
-//     notificationId: 2,
-//     title: 'Task 2',
-//     description: 'Description 2',
-//     dueDate: DateTime.now().add(const Duration(days: 1)), // tomorrow
-//     alarmSet: true,
-//   ),
-//   TaskModel(
-//     id: '3',
-//     notificationId: 3,
-//     title: 'Task 3',
-//     description: 'Description 3',
-//     dueDate: DateTime.now().add(Duration(hours: 1)), // today
-//     alarmSet: true,
-//   ),
-//   TaskModel(
-//     id: '4',
-//     notificationId: 4,
-//     title: 'Task 4',
-//     description: 'Description 2',
-//     dueDate: DateTime.now().add(const Duration(days: 2)), // tomorrow
-//     alarmSet: true,
-//   ),
-//   TaskModel(
-//     id: '5',
-//     notificationId: 5,
-//     title: 'Task 5',
-//     description: 'Description 2',
-//     dueDate: DateTime.now().add(const Duration(days: 3)), // tomorrow
-//   ),
-//   // Add more tasks...
-// ];

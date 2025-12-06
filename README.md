@@ -1,44 +1,113 @@
-# 📱 Well Task App
+# WellTask - Advanced Productivity App
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/9665a620-c35f-4e39-956a-9731649fd5f6" alt="Well Task Logo" width="150"/>
-</p>
-
-**Well Task App** is a cross-platform productivity application built with **Flutter**. It enables users to manage tasks efficiently with features like authentication, task creation, and local storage. The app leverages **Firebase** for backend services and **Hive** for local data persistence.
-
----
+WellTask is a feature-rich Flutter application designed to help users organize tasks, track time, and improve productivity with AI-powered insights.
 
 ## 🚀 Features
 
-- 🔐 **User Authentication** – Sign up, login, change password, and reset password using Firebase Auth.  
-- 📝 **Task Management** – Create, update, and delete tasks with an intuitive UI.  
-- 📦 **Local Storage** – Offline support using Hive for storing user data and tasks.  
-- 🌐 **Cross-Platform** – Compatible with Android and iOS.  
-- 🎨 **Responsive UI** – Built with Flutter’s Material Design components for a seamless user experience.
+### ✅ Core Task Management
+-   **Create, Read, Update, Delete (CRUD)** tasks.
+-   **Categorization**: Organize by Work, Personal, Health, Study, etc.
+-   **Prioritization**: Low, Medium, High priority levels with visual indicators.
+-   **Tags**: Add custom tags for flexible filtering.
+-   **Subtasks**: Break down complex tasks into manageable steps.
+-   **Recurring Tasks**: Set tasks to repeat daily, weekly, or monthly.
 
----
+### ⏱️ Productivity Tools
+-   **Time Tracking**: Built-in timer to log time spent on specific tasks.
+-   **Statistics Dashboard**: Visualize completion rates, focus time, and weekly activity.
+-   **Calendar View**: Drag-and-drop tasks (coming soon) and view deadlines by month/week.
+
+### 🤖 AI-Powered Insights
+-   **Gemini Integration**: Uses Google Gemini AI to analyze your task list.
+-   **Productivity Score**: Get a calculated score based on your completion history and priority handling.
+-   **Smart Recommendations**: tailored advice to improve your workflow.
+
+### 📎 Media & Attachments
+-   **File Support**: Attach images and documents to tasks.
+-   **Offline Persistence**: Attachments are stored locally for quick access.
+
+### 🔔 Notifications & Offline Support
+-   **Smart Reminders**: Schedule alarms and get "5-minute before" warnings.
+-   **Offline Mode**: Full functionality without internet; syncs automatically when online.
+-   **Connectivity Indicator**: Visual feedback when network is lost.
+
+### 🎨 UI/UX
+-   **Modern Design**: Clean aesthetics with `flutter_screenutil` for responsiveness.
+-   **Haptic Feedback**: Tactile response for interactions.
+-   **Animations**: Smooth transitions using `flutter_animate` and custom implementations.
 
 ## 🛠️ Tech Stack
 
-- **Flutter** – UI toolkit for building natively compiled applications  
-- **Firebase** – Authentication and Firestore for backend services  
-- **Hive** – Lightweight and fast key-value database for local persistence  
-- **Riverpod** – Scalable and safe state management solution
+-   **Framework**: Flutter
+-   **Language**: Dart
+-   **State Management**: Riverpod (Code Generation)
+-   **Local Database**: Hive
+-   **Backend/Auth**: Firebase (Auth, Firestore)
+-   **AI**: Google Generative AI SDK
+-   **Navigation**: GoRouter
+-   **Architecture**: Clean Architecture (Data, Domain, Presentation layers)
 
----
+## 📦 Installation
 
-## 📬 Contact
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/yourusername/well_task_app.git
+    cd well_task_app
+    ```
 
-- GitHub: [@teederx](https://github.com/teederx)  
-- Email: [idowufavour07@gmail.com](mailto:idowufavour07@gmail.com)
+2.  **Install dependencies:**
+    ```bash
+    flutter pub get
+    ```
 
----
+3.  **Setup Environment:**
+    -   Create a `.env` file in the root.
+    -   Add your Gemini API Key:
+        ```env
+        GEMINI_API_KEY=your_api_key_here
+        ```
+
+4.  **Run Code Generation:**
+    ```bash
+    flutter pub run build_runner build --delete-conflicting-outputs
+    ```
+
+5.  **Run the App:**
+    ```bash
+    flutter run
+    ```
+
+## 🧪 Testing
+
+The project includes a suite of tests:
+
+-   **Unit Tests**: `flutter test test/models`
+-   **Widget Tests**: `flutter test test/widgets`
+-   **Provider Tests**: `flutter test test/providers`
+-   **Integration Tests**: `flutter test integration_test/app_test.dart`
+
+## 📂 Project Structure
+
+```
+lib/
+├── data/
+│   ├── models/       # Data models (Freezed)
+│   ├── services/     # API clients, Local Storage, Notification Service
+│   └── repositories/ # Data access abstraction
+├── presentation/
+│   ├── providers/    # Riverpod providers
+│   ├── screens/      # UI Screens (TaskPage, InsightsPage, etc.)
+│   └── widgets/      # Reusable UI components
+├── utils/
+│   ├── config/       # Router, Theme, Date Formatting
+│   └── constants/    # Colors, Strings
+└── main.dart         # App Entry Point
+```
 
 ## 🤝 Contributing
 
-Contributions are welcome!  
-Feel free to **fork** the repository and submit a **pull request** for any features, bugs, or improvements.
+Contributions are welcome! Please fork the repository and submit a pull request.
 
----
+## 📄 License
 
-⭐️ Don’t forget to **star** this repo if you find it helpful!
+This project is licensed under the MIT License.

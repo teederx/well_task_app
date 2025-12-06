@@ -66,7 +66,10 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     ref.listen(isLogin ? signInProvider : signUpProvider, (previous, next) {
       next.whenOrNull(
         error: (e, st) {
-          final error = e as CustomErrorModel;
+          final error =
+              e is CustomErrorModel
+                  ? e
+                  : CustomErrorModel(code: 'Error', message: e.toString());
           showConfirmDialog(
             context: context,
             title: error.code,

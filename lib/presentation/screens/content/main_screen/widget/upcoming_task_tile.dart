@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:well_task_app/data/models/task_model/task_model.dart';
 import 'package:well_task_app/utils/config/formatted_date_time.dart';
 
 import '../../../../../utils/constants/app_theme.dart';
@@ -7,15 +8,23 @@ import '../../../../../utils/constants/app_theme.dart';
 class UpcomingTaskTile extends StatelessWidget {
   const UpcomingTaskTile({
     super.key,
+    required this.id,
     required this.title,
     required this.description,
     required this.dateTime,
     required this.onTap,
+    required this.onComplete,
+    required this.onDelete,
+    required this.priority,
   });
+  final String id;
   final String title;
   final String description;
   final DateTime dateTime;
   final VoidCallback onTap;
+  final VoidCallback onComplete;
+  final VoidCallback onDelete;
+  final TaskPriority priority;
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +88,7 @@ class UpcomingTaskTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title.replaceAll(
-                        '\n',
-                        ' ',
-                      ), 
+                      title.replaceAll('\n', ' '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -91,10 +97,7 @@ class UpcomingTaskTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      description.replaceAll(
-                        '\n',
-                        ' ',
-                      ), 
+                      description.replaceAll('\n', ' '),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

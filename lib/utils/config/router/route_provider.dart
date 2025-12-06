@@ -11,6 +11,7 @@ import '../../../presentation/screens/auth/change_password_page.dart';
 import '../../../presentation/screens/auth/reset_password_page.dart';
 import '../../../presentation/screens/content/main_screen/main_screen.dart';
 import '../../../presentation/screens/content/notifications_page/notifications_page.dart';
+import '../../../presentation/screens/content/insights_page/insights_page.dart';
 
 part 'route_provider.g.dart';
 
@@ -83,6 +84,13 @@ GoRouter router(Ref ref) {
         name: ResetPasswordPage.routeName,
         builder: (context, state) {
           return ResetPasswordPage();
+        },
+      ),
+      GoRoute(
+        path: InsightsPage.routeSettings,
+        name: InsightsPage.routeName,
+        builder: (context, state) {
+          return const InsightsPage();
         },
       ),
     ],

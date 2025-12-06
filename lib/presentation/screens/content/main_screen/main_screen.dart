@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:well_task_app/presentation/screens/content/calendar_page/calendar_page.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/completed_tasks.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/profile/profile.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/tasks.dart';
 import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/utils/config/haptic_service.dart';
 
 import 'pages/home.dart';
 import 'widget/fab.dart';
+import 'widget/offline_indicator.dart';
 
 class MainScreen extends StatefulWidget {
   static const String routeSetting = '/main';
@@ -21,6 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
+    HapticService.selectionClick();
     setState(() {
       _currentIndex = index;
     });
@@ -31,12 +35,31 @@ class _MainScreenState extends State<MainScreen> {
     final List<Widget> screens = [
       Home(onTodayTap: () => _onTabTapped(1)),
       Tasks(),
+      CalendarPage(),
       CompletedTasks(),
       Profile(),
     ];
 
     return Scaffold(
-      body: screens[_currentIndex],
+      body: Column(
+        children: [
+          const OfflineIndicator(),
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: AppTheme.normalAnimation,
+              switchInCurve: Curves.easeInOut,
+              switchOutCurve: Curves.easeInOut,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: Container(
+                key: ValueKey<int>(_currentIndex),
+                child: screens[_currentIndex],
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: Fab(pageType: PageType.addTask),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: bottonNav(),
@@ -47,12 +70,17 @@ class _MainScreenState extends State<MainScreen> {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 24.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, AppTheme.purple.withValues(alpha: 0.03)],
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(40),
-            blurRadius: 10,
-            spreadRadius: 2,
+            color: AppTheme.purple.withValues(alpha: 0.1),
+            blurRadius: 16,
+            spreadRadius: 0,
+            offset: const Offset(0, -2),
           ),
         ],
         borderRadius: BorderRadius.only(
@@ -69,9 +97,11 @@ class _MainScreenState extends State<MainScreen> {
           Spacer(flex: 1),
           _buildNavItem(icon: Icons.assignment_rounded, index: 1),
           Spacer(flex: 2),
-          _buildNavItem(icon: Icons.assignment_turned_in_rounded, index: 2),
+          _buildNavItem(icon: Icons.calendar_month_rounded, index: 2),
+          Spacer(flex: 2),
+          _buildNavItem(icon: Icons.assignment_turned_in_rounded, index: 3),
           Spacer(flex: 1),
-          _buildNavItem(icon: Icons.person, index: 3),
+          _buildNavItem(icon: Icons.person, index: 4),
         ],
       ),
     );

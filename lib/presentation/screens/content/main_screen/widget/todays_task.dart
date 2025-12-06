@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../data/models/task_model/task_model.dart';
+import '../../../../../utils/config/alarms_services.dart';
 import '../../../../../utils/config/show_confirm_dialog.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../../task_page/task_page.dart';
 import '../main_screen.dart';
 import 'all_tasks_tile.dart';
+import 'empty_state_widget.dart';
 import 'show_custom_dialog.dart';
 import 'task_formats.dart';
 import 'tile_animation.dart';
+
+final notificationService = AlarmServicesImpl();
 
 class TodaysTasks extends ConsumerWidget {
   const TodaysTasks({super.key, required this.tasksList});
@@ -18,24 +23,23 @@ class TodaysTasks extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDate = DateTime.now();
-    final filteredTasks = tasksForDate(selectedDate, tasksList);
+    final filteredTasks = tasksForToday(tasksList);
 
     if (filteredTasks.isEmpty) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset('assets/images/no-task.png', height: 200.h, width: 300.w),
-          5.verticalSpace,
-          Text(
-            'No undone tasks for today',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'optician',
-            ),
-          ),
-        ],
+      return EmptyStateWidget(
+        icon: Icons.wb_sunny,
+        iconColor: Colors.orange,
+        iconSize: 100.sp,
+        title: 'No Tasks for Today',
+        subtitle: 'Enjoy your free day or create a new task to stay productive',
+        buttonText: 'Add Task',
+        onButtonPressed: () {
+          showCustomDialog(
+            context: context,
+            barrierLabel: 'Add Task',
+            child: TaskPage(pageType: PageType.addTask),
+          );
+        },
       );
     }
 
@@ -52,10 +56,11 @@ class TodaysTasks extends ConsumerWidget {
               description: task.description ?? '',
               dateTime: task.dueDate,
               isCompleted: task.isCompleted,
-              onTap:
-                  () => ref
-                      .read(taskListProvider.notifier)
-                      .toggleComplete(task.id),
+              priority: task.priority,
+              onTap: () {
+                HapticFeedback.lightImpact();
+                ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
+              },
               handleMenuSelection: (String value) {
                 if (value == 'view') {
                   showCustomDialog(
@@ -69,7 +74,10 @@ class TodaysTasks extends ConsumerWidget {
                     title: 'Delete Task',
                     message: 'Are you sure you want to delete this task?',
                     onYes: () {
-                      ref.read(taskListProvider.notifier).removeTask(task.id);
+                      HapticFeedback.mediumImpact();
+                      ref
+                          .read(taskListProvider.notifier)
+                          .removeTask(id: task.id);
                       notificationService.cancelTaskNotification(
                         notificationId: task.notificationId,
                         dateTime: task.dueDate,
@@ -95,5 +103,3 @@ class TodaysTasks extends ConsumerWidget {
     );
   }
 }
-
-

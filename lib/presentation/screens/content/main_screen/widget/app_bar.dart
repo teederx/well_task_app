@@ -8,6 +8,7 @@ import '../../../../../utils/constants/app_theme.dart';
 import '../../../../providers/tasks_providers/notifications/notifications_provider.dart';
 import '../../../../providers/user/user_provider.dart';
 import '../../notifications_page/notifications_page.dart';
+import '../../insights_page/insights_page.dart';
 
 class Appbar extends ConsumerWidget {
   const Appbar({super.key});
@@ -51,6 +52,14 @@ class Appbar extends ConsumerWidget {
                 semanticsLabel: 'Notifications',
               ),
               onPressed: () => context.pushNamed(NotificationsPage.routeName),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.auto_awesome_outlined,
+                color: AppTheme.purple,
+                size: 28.sp,
+              ),
+              onPressed: () => context.pushNamed(InsightsPage.routeName),
             ),
             if (hasDueToday)
               Positioned(
