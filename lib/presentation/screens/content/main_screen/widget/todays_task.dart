@@ -43,63 +43,62 @@ class TodaysTasks extends ConsumerWidget {
       );
     }
 
-    return Column(
-      children: List.generate(
-        filteredTasks.length < 3 ? filteredTasks.length : 3,
-        (index) {
-          final task = filteredTasks[index];
-          return TilesAnimation(
-            index: index,
-            child: AllTasksTile(
-              id: task.id,
-              title: task.title,
-              description: task.description ?? '',
-              dateTime: task.dueDate,
-              isCompleted: task.isCompleted,
-              priority: task.priority,
-              onTap: () {
-                HapticFeedback.lightImpact();
-                ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
-              },
-              handleMenuSelection: (String value) {
-                if (value == 'view') {
-                  showCustomDialog(
-                    context: context,
-                    barrierLabel: 'View Task',
-                    child: TaskPage(pageType: PageType.viewTask, id: task.id),
-                  );
-                } else if (value == 'delete') {
-                  showConfirmDialog(
-                    context: context,
-                    title: 'Delete Task',
-                    message: 'Are you sure you want to delete this task?',
-                    onYes: () {
-                      HapticFeedback.mediumImpact();
-                      ref
-                          .read(taskListProvider.notifier)
-                          .removeTask(id: task.id);
-                      notificationService.cancelTaskNotification(
-                        notificationId: task.notificationId,
-                        dateTime: task.dueDate,
-                        title: task.title,
-                        context: context,
-                      );
-                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 1),
-                          behavior: SnackBarBehavior.floating,
-                          content: const Text('Task deleted successfully'),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-          );
-        },
-      ),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: filteredTasks.length,
+      separatorBuilder: (_, __) => 10.verticalSpace,
+      itemBuilder: (context, index) {
+        final task = filteredTasks[index];
+        return TilesAnimation(
+          index: index,
+          child: AllTasksTile(
+            id: task.id,
+            title: task.title,
+            description: task.description ?? '',
+            dateTime: task.dueDate,
+            isCompleted: task.isCompleted,
+            priority: task.priority,
+            onTap: () {
+              HapticFeedback.lightImpact();
+              ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
+            },
+            handleMenuSelection: (String value) {
+              if (value == 'view') {
+                showCustomDialog(
+                  context: context,
+                  barrierLabel: 'View Task',
+                  child: TaskPage(pageType: PageType.viewTask, id: task.id),
+                );
+              } else if (value == 'delete') {
+                showConfirmDialog(
+                  context: context,
+                  title: 'Delete Task',
+                  message: 'Are you sure you want to delete this task?',
+                  onYes: () {
+                    HapticFeedback.mediumImpact();
+                    ref.read(taskListProvider.notifier).removeTask(id: task.id);
+                    notificationService.cancelTaskNotification(
+                      notificationId: task.notificationId,
+                      dateTime: task.dueDate,
+                      title: task.title,
+                      context: context,
+                    );
+                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        duration: const Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                        content: const Text('Task deleted successfully'),
+                      ),
+                    );
+                  },
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }

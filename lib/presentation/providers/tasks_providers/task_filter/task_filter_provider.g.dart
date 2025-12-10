@@ -25,7 +25,7 @@ final filteredTaskListProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FilteredTaskListRef = AutoDisposeFutureProviderRef<List<TaskModel>>;
-String _$taskFilterHash() => r'6bc8a656c8a31cd465596a64274040b63d55f409';
+String _$taskFilterHash() => r'7496024a2fd4f0714c92c9cc9e0978076658cb8f';
 
 /// See also [TaskFilter].
 @ProviderFor(TaskFilter)

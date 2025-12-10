@@ -7,11 +7,18 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
 
 class LocalNotificationService {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  bool _initialized = false;
 
-  Future initialize() async {
+  Future<void> ensureInitialized() async {
+    if (_initialized) return;
+    await initialize();
+  }
+
+  Future<void> initialize() async {
+    if (_initialized) return;
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     final iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -36,6 +43,7 @@ class LocalNotificationService {
         }
       },
     );
+    _initialized = true;
   }
 
   Future<void> scheduleNotification({
@@ -44,6 +52,7 @@ class LocalNotificationService {
     required String body,
     required DateTime scheduledDate,
   }) async {
+    await ensureInitialized();
     const androidDetails = AndroidNotificationDetails(
       'task_channel_id',
       'Task Reminders',
@@ -77,6 +86,7 @@ class LocalNotificationService {
   }
 
   Future<void> cancelNotification(int id) async {
+    await ensureInitialized();
     await flutterLocalNotificationsPlugin.cancel(id);
   }
 

@@ -43,16 +43,9 @@ class Appbar extends ConsumerWidget {
           ],
         ),
         Spacer(),
-        Stack(
-          alignment: Alignment.center,
+        Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: SvgPicture.asset(
-                'assets/svg/icons/notification.svg',
-                semanticsLabel: 'Notifications',
-              ),
-              onPressed: () => context.pushNamed(NotificationsPage.routeName),
-            ),
             IconButton(
               icon: Icon(
                 Icons.auto_awesome_outlined,
@@ -61,12 +54,25 @@ class Appbar extends ConsumerWidget {
               ),
               onPressed: () => context.pushNamed(InsightsPage.routeName),
             ),
-            if (hasDueToday)
-              Positioned(
-                right: 15.w,
-                top: 10.h,
-                child: SvgPicture.asset('assets/svg/icons/Ellipse.svg'),
-              ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: SvgPicture.asset(
+                    'assets/svg/icons/notification.svg',
+                    semanticsLabel: 'Notifications',
+                  ),
+                  onPressed:
+                      () => context.pushNamed(NotificationsPage.routeName),
+                ),
+                if (hasDueToday)
+                  Positioned(
+                    right: 15.w,
+                    top: 10.h,
+                    child: SvgPicture.asset('assets/svg/icons/Ellipse.svg'),
+                  ),
+              ],
+            ),
           ],
         ),
       ],

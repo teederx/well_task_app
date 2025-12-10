@@ -14,15 +14,24 @@ class TaskFilter extends _$TaskFilter {
   }
 
   void setCategory(TaskCategory? category) {
-    state = state.copyWith(selectedCategory: category);
+    state = state.copyWith(
+      selectedCategory: category,
+      setCategoryNull: category == null,
+    );
   }
 
   void setPriority(TaskPriority? priority) {
-    state = state.copyWith(selectedPriority: priority);
+    state = state.copyWith(
+      selectedPriority: priority,
+      setPriorityNull: priority == null,
+    );
   }
 
   void setDateRange(DateTimeRange? range) {
-    state = state.copyWith(selectedDateRange: range);
+    state = state.copyWith(
+      selectedDateRange: range,
+      setDateRangeNull: range == null,
+    );
   }
 
   void setSearchQuery(String query) {
@@ -37,6 +46,10 @@ class TaskFilter extends _$TaskFilter {
       currentTags.add(tag);
     }
     state = state.copyWith(selectedTags: currentTags);
+  }
+
+  void setTags(List<String> tags) {
+    state = state.copyWith(selectedTags: tags);
   }
 
   void clearFilters() {
@@ -61,15 +74,22 @@ class TaskFilterState {
 
   TaskFilterState copyWith({
     TaskCategory? selectedCategory,
+    bool setCategoryNull = false,
     TaskPriority? selectedPriority,
+    bool setPriorityNull = false,
     DateTimeRange? selectedDateRange,
+    bool setDateRangeNull = false,
     String? searchQuery,
     List<String>? selectedTags,
   }) {
     return TaskFilterState(
-      selectedCategory: selectedCategory ?? this.selectedCategory,
-      selectedPriority: selectedPriority ?? this.selectedPriority,
-      selectedDateRange: selectedDateRange ?? this.selectedDateRange,
+      selectedCategory:
+          setCategoryNull ? null : (selectedCategory ?? this.selectedCategory),
+      selectedPriority:
+          setPriorityNull ? null : (selectedPriority ?? this.selectedPriority),
+      selectedDateRange: setDateRangeNull
+          ? null
+          : (selectedDateRange ?? this.selectedDateRange),
       searchQuery: searchQuery ?? this.searchQuery,
       selectedTags: selectedTags ?? this.selectedTags,
     );

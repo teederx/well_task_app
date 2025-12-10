@@ -34,59 +34,60 @@ class UpcomingTasks extends ConsumerWidget {
       );
     }
 
-    return Column(
-      children: List.generate(
-        upcomingTasks.length < 3 ? upcomingTasks.length : 3,
-        (index) {
-          final task = upcomingTasks[index];
-          return TilesAnimation(
-            index: index,
-            child: UpcomingTaskTile(
-              id: task.id,
-              title: task.title,
-              description: task.description ?? '',
-              dateTime: task.dueDate,
-              priority: task.priority,
-              onTap: () {
-                showCustomDialog(
-                  context: context,
-                  child: TaskPage(pageType: PageType.viewTask, id: task.id),
-                  barrierLabel: 'View Task',
-                );
-              },
-              onComplete: () {
-                HapticFeedback.lightImpact();
-                ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
-              },
-              onDelete: () {
-                showConfirmDialog(
-                  context: context,
-                  title: 'Delete Task',
-                  message: 'Are you sure you want to delete this task?',
-                  onYes: () {
-                    HapticFeedback.mediumImpact();
-                    ref.read(taskListProvider.notifier).removeTask(id: task.id);
-                    AlarmServicesImpl().cancelTaskNotification(
-                      notificationId: task.notificationId,
-                      dateTime: task.dueDate,
-                      title: task.title,
-                      context: context,
-                    );
-                    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        duration: const Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
-                        content: const Text('Task deleted successfully'),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
-      ),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: upcomingTasks.length,
+      separatorBuilder: (_, __) => 10.verticalSpace,
+      itemBuilder: (context, index) {
+        final task = upcomingTasks[index];
+        return TilesAnimation(
+          index: index,
+          child: UpcomingTaskTile(
+            id: task.id,
+            title: task.title,
+            description: task.description ?? '',
+            dateTime: task.dueDate,
+            priority: task.priority,
+            onTap: () {
+              showCustomDialog(
+                context: context,
+                child: TaskPage(pageType: PageType.viewTask, id: task.id),
+                barrierLabel: 'View Task',
+              );
+            },
+            onComplete: () {
+              HapticFeedback.lightImpact();
+              ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
+            },
+            onDelete: () {
+              showConfirmDialog(
+                context: context,
+                title: 'Delete Task',
+                message: 'Are you sure you want to delete this task?',
+                onYes: () {
+                  HapticFeedback.mediumImpact();
+                  ref.read(taskListProvider.notifier).removeTask(id: task.id);
+                  AlarmServicesImpl().cancelTaskNotification(
+                    notificationId: task.notificationId,
+                    dateTime: task.dueDate,
+                    title: task.title,
+                    context: context,
+                  );
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                      content: const Text('Task deleted successfully'),
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

@@ -64,8 +64,12 @@ class AllTasks extends ConsumerWidget {
           );
     }
 
-    return Column(
-      children: List.generate(filteredTasks.length, (index) {
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: filteredTasks.length,
+      separatorBuilder: (_, __) => 10.verticalSpace,
+      itemBuilder: (context, index) {
         final task = filteredTasks[index];
         return TilesAnimation(
           index: index,
@@ -116,7 +120,7 @@ class AllTasks extends ConsumerWidget {
             },
           ),
         );
-      }),
+      },
     );
   }
 }
