@@ -56,91 +56,99 @@ class Profile extends ConsumerWidget {
             ),
           ),
       data: (user) {
-        return Column(
-          children: [
-            ProfileHead(name: user.name), // ✅ Pass actual user name
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  ProfileTile(
-                    icon: Icons.mail_outline_rounded,
-                    title: user.email,
-                    index: 1,
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(bottom: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ProfileHead(name: user.name),
+                Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 20.r, vertical: 10.r),
+                  child: Column(
+                    children: [
+                      ProfileTile(
+                        icon: Icons.mail_outline_rounded,
+                        title: user.email,
+                        index: 1,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.phone_outlined,
+                        title: user.phone,
+                        index: 2,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.bar_chart_rounded,
+                        title: 'Statistics',
+                        onTap:
+                            () => showCustomDialog(
+                              context: context,
+                              barrierLabel: 'Statistics',
+                              child: const StatsPage(),
+                              height: 0.9,
+                            ),
+                        index: 3,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.auto_awesome_rounded,
+                        title: 'AI Insights',
+                        onTap:
+                            () => showCustomDialog(
+                              context: context,
+                              barrierLabel: 'AI Insights',
+                              child: const InsightsPage(),
+                              height: 0.9,
+                            ),
+                        index: 4,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.info_outline_rounded,
+                        title: 'About Us',
+                        onTap:
+                            () => showCustomDialog(
+                              context: context,
+                              barrierLabel: 'About Us',
+                              child: const AboutUs(),
+                              height: 0.65,
+                            ),
+                        index: 5,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.password_rounded,
+                        title: 'Change Password',
+                        onTap:
+                            () =>
+                                context.pushNamed(ChangePasswordPage.routeName),
+                        index: 6,
+                      ),
+                      5.verticalSpace,
+                      ProfileTile(
+                        icon: Icons.exit_to_app_rounded,
+                        title: 'Logout',
+                        onTap:
+                            () => showConfirmDialog(
+                              context: context,
+                              title: 'Logout',
+                              message: 'Are you sure you want to logout?',
+                              onYes:
+                                  () => ref
+                                      .read(signOutProvider.notifier)
+                                      .signOut(),
+                            ),
+                        index: 7,
+                      ),
+                    ],
                   ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.phone_outlined,
-                    title: user.phone,
-                    index: 2,
-                  ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.bar_chart_rounded,
-                    title: 'Statistics',
-                    onTap:
-                        () => showCustomDialog(
-                          context: context,
-                          barrierLabel: 'Statistics',
-                          child: const StatsPage(),
-                          height: 0.9,
-                        ),
-                    index: 3,
-                  ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.auto_awesome_rounded,
-                    title: 'AI Insights',
-                    onTap:
-                        () => showCustomDialog(
-                          context: context,
-                          barrierLabel: 'AI Insights',
-                          child: const InsightsPage(),
-                          height: 0.9,
-                        ),
-                    index: 4,
-                  ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.info_outline_rounded,
-                    title: 'About Us',
-                    onTap:
-                        () => showCustomDialog(
-                          context: context,
-                          barrierLabel: 'About Us',
-                          child: const AboutUs(),
-                          height: 0.65,
-                        ),
-                    index: 5,
-                  ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.password_rounded,
-                    title: 'Change Password',
-                    onTap:
-                        () => context.pushNamed(ChangePasswordPage.routeName),
-                    index: 6,
-                  ),
-                  5.verticalSpace,
-                  ProfileTile(
-                    icon: Icons.exit_to_app_rounded,
-                    title: 'Logout',
-                    onTap:
-                        () => showConfirmDialog(
-                          context: context,
-                          title: 'Logout',
-                          message: 'Are you sure you want to logout?',
-                          onYes:
-                              () =>
-                                  ref.read(signOutProvider.notifier).signOut(),
-                        ),
-                    index: 7,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

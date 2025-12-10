@@ -56,7 +56,10 @@ class Tasks extends ConsumerWidget {
                     },
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      child: AllTasks(tasksList: tasksList),
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 120.h),
+                        child: AllTasks(tasksList: tasksList),
+                      ),
                     ),
                   ),
                 ),

@@ -22,6 +22,19 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  late final List<Widget> _screens;
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      Home(onTodayTap: () => _onTabTapped(1)),
+      const Tasks(),
+      const CalendarPage(),
+      const CompletedTasks(),
+      const Profile(),
+    ];
+  }
 
   void _onTabTapped(int index) {
     HapticService.selectionClick();
@@ -32,30 +45,14 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> screens = [
-      Home(onTodayTap: () => _onTabTapped(1)),
-      Tasks(),
-      CalendarPage(),
-      CompletedTasks(),
-      Profile(),
-    ];
-
     return Scaffold(
       body: Column(
         children: [
           const OfflineIndicator(),
           Expanded(
-            child: AnimatedSwitcher(
-              duration: AppTheme.normalAnimation,
-              switchInCurve: Curves.easeInOut,
-              switchOutCurve: Curves.easeInOut,
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              child: Container(
-                key: ValueKey<int>(_currentIndex),
-                child: screens[_currentIndex],
-              ),
+            child: IndexedStack(
+              index: _currentIndex,
+              children: _screens,
             ),
           ),
         ],

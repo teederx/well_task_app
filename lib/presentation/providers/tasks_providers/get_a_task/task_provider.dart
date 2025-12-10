@@ -12,7 +12,24 @@ TaskModel task(Ref ref, {required String id}) {
 
   return taskListAsync.maybeWhen(
     data: (taskList) {
-      final task = taskList.firstWhere((task) => task.id == id);
+      if (taskList.isEmpty) {
+        return TaskModel(
+          id: id,
+          notificationId: 0,
+          title: '',
+          dueDate: DateTime.now(),
+        );
+      }
+
+      final task = taskList.firstWhere(
+        (task) => task.id == id,
+        orElse: () => TaskModel(
+          id: id,
+          notificationId: 0,
+          title: '',
+          dueDate: DateTime.now(),
+        ),
+      );
       return task;
     },
     orElse: () => TaskModel(id: id, notificationId: 0, title: '', dueDate: DateTime.now()),

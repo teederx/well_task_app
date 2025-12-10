@@ -941,7 +941,8 @@ class _TaskPageState extends ConsumerState<TaskPage> {
         12.verticalSpace,
         if (!isViewOnly) ...[
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            width: double.infinity,
+            // padding: EdgeInsets.symmetric(horizontal: 16.w),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.r),

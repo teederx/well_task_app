@@ -6,7 +6,8 @@ class AppTheme {
   // Light Theme Colors
   static const blue = Color(0xFF0C2747);
   static const pink = Color(0xFFF1DCEB);
-  static const latte = Color(0xFFFEF6E9);
+  // Use pure white for all backgrounds to keep pages consistent.
+  static const latte = Color(0xFFFFFFFF);
   static const yellow = Color(0xFFD7A745);
   static const purple = Color(0xFF5F33E1);
   static const purple2 = Color.fromARGB(255, 166, 144, 232);

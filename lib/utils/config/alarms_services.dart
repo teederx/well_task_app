@@ -50,6 +50,7 @@ class AlarmServicesImpl implements AlarmServices {
   }) async {
     if (title.isEmpty) return;
 
+    await _lNS.ensureInitialized();
     await checkAndPromptExactAlarmPermission();
 
     // Schedule the main notification
@@ -121,6 +122,7 @@ class AlarmServicesImpl implements AlarmServices {
   }) async {
     if (title.isEmpty) return;
 
+    await _lNS.ensureInitialized();
     final isScheduled = await _isNotificationScheduled(notificationId);
     if (isScheduled) {
       await _lNS.flutterLocalNotificationsPlugin.cancel(notificationId);

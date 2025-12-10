@@ -51,10 +51,12 @@ void showConfirmDialog({
                 if (onNo != null) onNo();
               },
               style: ElevatedButton.styleFrom(
-                elevation: 5,
+                elevation: 0,
+                backgroundColor: Colors.white,
                 foregroundColor: AppTheme.purple,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(color: AppTheme.purple),
                 ),
               ),
               child: const Text('No'),

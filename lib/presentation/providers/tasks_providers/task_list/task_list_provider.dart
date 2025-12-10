@@ -19,7 +19,14 @@ class TaskList extends _$TaskList {
   @override
   Future<List<TaskModel>> build() async {
     final repository = ref.read(tasksRepositoryProvider);
-    return await repository.getTasks();
+    try {
+      return await repository.getTasks();
+    } catch (e, st) {
+      // Avoid crashing the UI if auth is missing or storage fails.
+      // debugPrint('TaskList build error: $e');
+      // debugPrint('$st');
+      return [];
+    }
   }
 
   Future<void> addTask({

@@ -6,6 +6,7 @@ import '../../../../../../utils/constants/app_theme.dart';
 import 'package:well_task_app/data/models/task_model/task_model.dart';
 import 'package:well_task_app/utils/constants/priority_constants.dart';
 import '../../../../providers/tasks_providers/task_filter/task_filter_provider.dart';
+import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 
 class FilterBar extends ConsumerWidget {
   const FilterBar({super.key});
@@ -14,6 +15,16 @@ class FilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filterState = ref.watch(taskFilterProvider);
     final filterNotifier = ref.read(taskFilterProvider.notifier);
+    final tasksAsync = ref.watch(taskListProvider);
+    final tags =
+        tasksAsync.maybeWhen(
+          data: (tasks) => tasks
+              .expand((t) => t.tags)
+              .toSet()
+              .toList()
+            ..sort(),
+          orElse: () => <String>[],
+        );
 
     return Column(
       children: [
@@ -233,6 +244,72 @@ class FilterBar extends ConsumerWidget {
           ),
         ),
         10.verticalSpace,
+        if (tags.isNotEmpty) ...[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                FilterChip(
+                  label: const Text('All Tags'),
+                  selected: filterState.selectedTags.isEmpty,
+                  onSelected: (selected) {
+                    if (selected) {
+                      filterNotifier.setTags([]);
+                    }
+                  },
+                  backgroundColor: Colors.white,
+                  selectedColor: AppTheme.purple,
+                  labelStyle: TextStyle(
+                    color:
+                        filterState.selectedTags.isEmpty
+                            ? Colors.white
+                            : Colors.black,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.r),
+                    side: BorderSide(
+                      color:
+                          filterState.selectedTags.isEmpty
+                              ? Colors.transparent
+                              : Colors.grey.shade300,
+                    ),
+                  ),
+                ),
+                ...tags.map((tag) {
+                  final isSelected = filterState.selectedTags.contains(tag);
+                  return FilterChip(
+                    label: Text(tag),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        filterNotifier.toggleTag(tag);
+                      } else {
+                        filterNotifier.toggleTag(tag);
+                      }
+                    },
+                    backgroundColor: Colors.white,
+                    selectedColor: AppTheme.purple,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                      side: BorderSide(
+                        color:
+                            isSelected
+                                ? Colors.transparent
+                                : Colors.grey.shade300,
+                      ),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+          10.verticalSpace,
+        ],
         // Search Field
         TextField(
           onChanged: (value) => filterNotifier.setSearchQuery(value),

@@ -14,7 +14,7 @@ class StatsPage extends ConsumerWidget {
     final taskListAsync = ref.watch(taskListProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Statistics',
@@ -25,7 +25,7 @@ class StatsPage extends ConsumerWidget {
           ),
         ),
         centerTitle: false,
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Colors.white,
         elevation: 0,
       ),
       body: taskListAsync.when(

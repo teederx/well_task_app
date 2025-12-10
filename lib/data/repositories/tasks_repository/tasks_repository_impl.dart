@@ -45,6 +45,7 @@ class TasksRepositoryImpl implements TasksRepository {
 
     // 3. Schedule Notification
     if (task.alarmSet) {
+      await _notificationService.ensureInitialized();
       await _notificationService.scheduleNotification(
         id: task.notificationId,
         title: task.title,
@@ -53,6 +54,7 @@ class TasksRepositoryImpl implements TasksRepository {
       );
 
       if (task.remind5MinEarly) {
+        await _notificationService.ensureInitialized();
         await _notificationService.scheduleNotification(
           id: task.notificationId + 100000, // Offset ID for early reminder
           title: 'Upcoming: ${task.title}',
@@ -140,6 +142,7 @@ class TasksRepositoryImpl implements TasksRepository {
       );
 
       if (alarmSet) {
+        await _notificationService.ensureInitialized();
         await _notificationService.scheduleNotification(
           id: oldTask.notificationId,
           title: title,
@@ -148,6 +151,7 @@ class TasksRepositoryImpl implements TasksRepository {
         );
 
         if (remind5MinEarly) {
+          await _notificationService.ensureInitialized();
           await _notificationService.scheduleNotification(
             id: oldTask.notificationId + 100000,
             title: 'Upcoming: $title',
@@ -317,6 +321,7 @@ class TasksRepositoryImpl implements TasksRepository {
       final task = TaskModel.fromJson(Map<String, dynamic>.from(taskMap));
       if (newValue) {
         // Schedule
+        await _notificationService.ensureInitialized();
         await _notificationService.scheduleNotification(
           id: task.notificationId,
           title: task.title,
@@ -324,6 +329,7 @@ class TasksRepositoryImpl implements TasksRepository {
           scheduledDate: task.dueDate,
         );
         if (task.remind5MinEarly) {
+          await _notificationService.ensureInitialized();
           await _notificationService.scheduleNotification(
             id: task.notificationId + 100000,
             title: 'Upcoming: ${task.title}',

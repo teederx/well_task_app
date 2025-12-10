@@ -21,7 +21,7 @@ class InsightsPage extends ConsumerWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,12 +49,10 @@ class InsightsPage extends ConsumerWidget {
               ),
               20.verticalSpace,
               // Content
-              Expanded(
-                child: insightsState.when(
-                  data: (data) => _buildContent(data, ref),
-                  loading: () => _buildLoading(),
-                  error: (error, stack) => _buildError(error, ref),
-                ),
+              insightsState.when(
+                data: (data) => _buildContent(data, ref),
+                loading: () => _buildLoading(),
+                error: (error, stack) => _buildError(error, ref),
               ),
               20.verticalSpace,
               // Generate Button
@@ -152,45 +150,42 @@ class InsightsPage extends ConsumerWidget {
       );
     }
 
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ProductivityScoreCard(score: data.productivityScore),
-          25.verticalSpace,
-          Text(
-            'Summary',
-            style: TextStyle(
-              fontFamily: 'Optician',
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ProductivityScoreCard(score: data.productivityScore),
+        25.verticalSpace,
+        Text(
+          'Summary',
+          style: TextStyle(
+            fontFamily: 'Optician',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
           ),
-          10.verticalSpace,
-          Text(
-            data.summary,
-            style: TextStyle(
-              fontSize: 15.sp,
-              color: Colors.grey[700],
-              height: 1.5,
-            ),
+        ),
+        10.verticalSpace,
+        Text(
+          data.summary,
+          style: TextStyle(
+            fontSize: 15.sp,
+            color: Colors.grey[700],
+            height: 1.5,
           ),
-          25.verticalSpace,
-          Text(
-            'Recommendations',
-            style: TextStyle(
-              fontFamily: 'Optician',
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-            ),
+        ),
+        25.verticalSpace,
+        Text(
+          'Recommendations',
+          style: TextStyle(
+            fontFamily: 'Optician',
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
           ),
-          10.verticalSpace,
-          ...data.recommendations.asMap().entries.map((entry) {
-            return InsightCard(index: entry.key, recommendation: entry.value);
-          }),
-        ],
-      ),
+        ),
+        10.verticalSpace,
+        ...data.recommendations.asMap().entries.map((entry) {
+          return InsightCard(index: entry.key, recommendation: entry.value);
+        }),
+      ],
     );
   }
 
