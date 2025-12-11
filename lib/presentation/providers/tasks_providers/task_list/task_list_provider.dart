@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +20,7 @@ class TaskList extends _$TaskList {
     final repository = ref.read(tasksRepositoryProvider);
     try {
       return await repository.getTasks();
-    } catch (e, st) {
+    } catch (e, _) {
       // Avoid crashing the UI if auth is missing or storage fails.
       // debugPrint('TaskList build error: $e');
       // debugPrint('$st');
