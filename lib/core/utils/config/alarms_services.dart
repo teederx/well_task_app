@@ -11,6 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
 import 'package:well_task_app/core/utils/config/local_notification_service.dart';
+import 'package:well_task_app/core/utils/config/notification_sound_prefs.dart';
 
 LocalNotificationService _lNS = LocalNotificationService();
 
@@ -52,6 +53,14 @@ class AlarmServicesImpl implements AlarmServices {
 
     await _lNS.ensureInitialized();
     await checkAndPromptExactAlarmPermission();
+    final soundPreference = await NotificationSoundPrefs.load();
+    final androidSound =
+        soundPreference == NotificationSoundOption.alarm
+            ? const fln.RawResourceAndroidNotificationSound('alarm')
+            : null;
+    final iosSound = soundPreference == NotificationSoundOption.alarm
+        ? 'alarm.wav'
+        : null;
 
     // Schedule the main notification
     await _lNS.flutterLocalNotificationsPlugin.zonedSchedule(
@@ -68,11 +77,13 @@ class AlarmServicesImpl implements AlarmServices {
           priority: fln.Priority.high,
           ongoing: true,
           audioAttributesUsage: fln.AudioAttributesUsage.alarm,
+          sound: androidSound,
         ),
         iOS: fln.DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
+          sound: iosSound,
         ),
       ),
       payload: id,
@@ -97,11 +108,13 @@ class AlarmServicesImpl implements AlarmServices {
               priority: fln.Priority.high,
               ongoing: true,
               audioAttributesUsage: fln.AudioAttributesUsage.alarm,
+              sound: androidSound,
             ),
             iOS: fln.DarwinNotificationDetails(
               presentAlert: true,
               presentBadge: true,
               presentSound: true,
+              sound: iosSound,
             ),
           ),
           payload: id,

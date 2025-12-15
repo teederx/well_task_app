@@ -39,30 +39,31 @@ class Tasks extends ConsumerWidget {
     return tasksListState.when(
       data: (tasksList) {
         return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            child: Column(
-              children: [
-                CustomAppbar(title: 'All Tasks (${tasksList.length})'),
-                5.verticalSpace,
-                DatePickerScreen(),
-                10.verticalSpace,
-                FilterBar(),
-                10.verticalSpace,
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      return ref.refresh(taskListProvider.future);
-                    },
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: 120.h),
-                        child: AllTasks(tasksList: tasksList),
-                      ),
-                    ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              return ref.refresh(taskListProvider.future);
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      CustomAppbar(title: 'All Tasks (${tasksList.length})'),
+                      5.verticalSpace,
+                      DatePickerScreen(),
+                      10.verticalSpace,
+                      FilterBar(),
+                      10.verticalSpace,
+                    ]),
                   ),
                 ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  sliver: AllTasksSliver(tasksList: tasksList),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 120.h)),
               ],
             ),
           ),

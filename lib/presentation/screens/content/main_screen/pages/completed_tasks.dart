@@ -17,26 +17,30 @@ class CompletedTasks extends ConsumerWidget {
     return tasksListState.when(
       data: (tasksList) {
         return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-            child: Column(
-              children: [
-                CustomAppbar(title: 'Completed Tasks (${tasksList.length})'),
-                20.verticalSpace,
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async {
-                      return ref.refresh(completedTaskListProvider.future);
-                    },
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: AllTasks(
-                        tasksList: tasksList,
-                        isCompletedScreen: true,
-                      ),
-                    ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              return ref.refresh(completedTaskListProvider.future);
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      CustomAppbar(title: 'Completed Tasks (${tasksList.length})'),
+                      20.verticalSpace,
+                    ]),
                   ),
                 ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  sliver: AllTasksSliver(
+                    tasksList: tasksList,
+                    isCompletedScreen: true,
+                  ),
+                ),
+                SliverToBoxAdapter(child: SizedBox(height: 120.h)),
               ],
             ),
           ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:well_task_app/core/utils/config/haptic_service.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import 'package:well_task_app/presentation/screens/content/calendar_page/calendar_page.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/completed_tasks.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/profile/profile.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/tasks.dart';
-import 'package:well_task_app/core/utils/constants/app_theme.dart';
-import 'package:well_task_app/core/utils/config/haptic_service.dart';
 
 import 'pages/home.dart';
 import 'widget/fab.dart';
@@ -45,20 +45,33 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final showFab =
+        _currentIndex == 0 || _currentIndex == 1 || _currentIndex == 3;
+
     return Scaffold(
       body: Column(
         children: [
           const OfflineIndicator(),
           Expanded(
-            child: IndexedStack(
-              index: _currentIndex,
-              children: _screens,
-            ),
+            child: IndexedStack(index: _currentIndex, children: _screens),
           ),
         ],
       ),
-      floatingActionButton: Fab(pageType: PageType.addTask),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: AnimatedSlide(
+        duration: AppTheme.mediumAnimation,
+        curve: Curves.easeOutCubic,
+        offset: showFab ? Offset.zero : const Offset(0, 1.2),
+        child: AnimatedOpacity(
+          duration: AppTheme.mediumAnimation,
+          curve: Curves.easeOutCubic,
+          opacity: showFab ? 1 : 0,
+          child: IgnorePointer(
+            ignoring: !showFab,
+            child: const Fab(pageType: PageType.addTask),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       bottomNavigationBar: bottonNav(),
     );
   }
@@ -141,5 +154,3 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 enum PageType { addTask, editTask, viewTask }
-
-

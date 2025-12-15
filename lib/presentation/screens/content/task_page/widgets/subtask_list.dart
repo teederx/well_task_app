@@ -104,10 +104,13 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
             itemCount: widget.subtasks.length,
             itemBuilder: (context, index) {
               final subtask = widget.subtasks[index];
-              return _SubtaskTile(
-                subtask: subtask,
-                onToggle: () => _toggleSubtask(index),
-                onDelete: () => _deleteSubtask(index),
+              return KeyedSubtree(
+                key: ValueKey(subtask.id),
+                child: _SubtaskTile(
+                  subtask: subtask,
+                  onToggle: () => _toggleSubtask(index),
+                  onDelete: () => _deleteSubtask(index),
+                ),
               );
             },
           ),
