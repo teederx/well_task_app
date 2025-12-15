@@ -2,14 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
+import 'package:well_task_app/core/utils/config/router/route_provider.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
+import 'notification_sound_prefs.dart';
+
+@pragma('vm:entry-point')
+void onDidReceiveBackgroundNotificationResponse(NotificationResponse response) {
+  // Handle background notification response if needed
+  debugPrint('Background Notification Response: ${response.payload}');
+}
 
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   bool _initialized = false;
 
   Future<void> ensureInitialized() async {
@@ -34,16 +44,79 @@ class LocalNotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        final taskId = response.payload;
-        if (taskId != null) {
-          navigatorKey.currentState?.pushNamed(
-            MainScreen.routeName,
-            arguments: taskId,
-          );
-        }
+        _handleNotificationResponse(response);
       },
+      onDidReceiveBackgroundNotificationResponse:
+          onDidReceiveBackgroundNotificationResponse,
     );
+
+    // Create notification channels explicitly
+    await _createNotificationChannels();
+
+    // Handle initial notification if app was closed
+    final NotificationAppLaunchDetails? launchDetails =
+        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp ?? false) {
+      if (launchDetails?.notificationResponse != null) {
+        _handleNotificationResponse(launchDetails!.notificationResponse!);
+      }
+    }
+
     _initialized = true;
+  }
+
+  Future<void> _createNotificationChannels() async {
+    const taskChannel = AndroidNotificationChannel(
+      'task_channel_id',
+      'Task Reminders',
+      description: 'Channel for task reminders',
+      importance: Importance.max,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('alarm'),
+      enableVibration: true,
+    );
+
+    const dailyChannel = AndroidNotificationChannel(
+      'daily_channel_id',
+      'Daily Reminders',
+      description: 'Channel for daily reminders',
+      importance: Importance.max,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('alarm'),
+      enableVibration: true,
+    );
+
+    final androidPlugin =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+
+    await androidPlugin?.createNotificationChannel(taskChannel);
+    await androidPlugin?.createNotificationChannel(dailyChannel);
+  }
+
+  Future<void> _handleNotificationResponse(
+    NotificationResponse response,
+  ) async {
+    final taskId = response.payload;
+    if (taskId != null) {
+      // Wait for context to be available if app is just starting
+      int retryCount = 0;
+      while (rootNavigatorKey.currentContext == null && retryCount < 50) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        retryCount++;
+      }
+
+      final context = rootNavigatorKey.currentContext;
+      if (context != null) {
+        // ignore: use_build_context_synchronously
+        context.pushNamed(
+          'task',
+          pathParameters: {'id': taskId, 'pageType': PageType.viewTask.name},
+        );
+      }
+    }
   }
 
   Future<void> scheduleNotification({
@@ -53,23 +126,36 @@ class LocalNotificationService {
     required DateTime scheduledDate,
   }) async {
     await ensureInitialized();
-    const androidDetails = AndroidNotificationDetails(
+    await checkAndPromptExactAlarmPermission();
+
+    final soundPreference = await NotificationSoundPrefs.load();
+    final androidSound =
+        soundPreference == NotificationSoundOption.alarm
+            ? const RawResourceAndroidNotificationSound('alarm')
+            : null;
+    final iosSound =
+        soundPreference == NotificationSoundOption.alarm ? 'alarm.wav' : null;
+
+    final androidDetails = AndroidNotificationDetails(
       'task_channel_id',
       'Task Reminders',
       channelDescription: 'Channel for task reminders',
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      sound: RawResourceAndroidNotificationSound('alarm'),
+      sound: androidSound,
       enableVibration: true,
+      audioAttributesUsage: AudioAttributesUsage.alarm,
+      fullScreenIntent: true,
+      category: AndroidNotificationCategory.alarm,
     );
-    const iosDetails = DarwinNotificationDetails(
+    final iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
-      sound: 'alarm.wav',
+      sound: iosSound,
     );
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -109,6 +195,8 @@ class LocalNotificationService {
       playSound: true,
       sound: RawResourceAndroidNotificationSound('alarm'),
       enableVibration: true,
+      fullScreenIntent: true,
+      category: AndroidNotificationCategory.alarm,
     );
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
@@ -116,7 +204,7 @@ class LocalNotificationService {
       presentSound: true,
       sound: 'alarm.wav',
     );
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
@@ -170,8 +258,36 @@ class LocalNotificationService {
           await Permission.notification.request();
         }
       }
+      await checkAndPromptBatteryOptimization();
+    }
+  }
+
+  Future<void> checkAndPromptBatteryOptimization() async {
+    if (Platform.isAndroid) {
+      final isIgnoring = await Permission.ignoreBatteryOptimizations.isGranted;
+      if (!isIgnoring) {
+        final intent = AndroidIntent(
+          action: 'android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS',
+          data: 'package:com.example.well_task_app',
+          flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+        );
+        await intent.launch();
+      }
+    }
+  }
+
+  Future<void> checkAndPromptExactAlarmPermission() async {
+    if (Platform.isAndroid) {
+      final sdkInt = int.tryParse(Platform.version.split(' ').first);
+      if (sdkInt != null && sdkInt >= 31) {
+        if (await Permission.scheduleExactAlarm.isDenied) {
+          final intent = AndroidIntent(
+            action: 'android.settings.REQUEST_SCHEDULE_EXACT_ALARM',
+            flags: <int>[Flag.FLAG_ACTIVITY_NEW_TASK],
+          );
+          await intent.launch();
+        }
+      }
     }
   }
 }
-
-

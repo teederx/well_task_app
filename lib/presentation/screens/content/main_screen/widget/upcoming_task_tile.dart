@@ -5,6 +5,7 @@ import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
 import 'package:well_task_app/domain/entities/task_enums.dart';
 
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/domain/entities/subtask.dart';
 
 class UpcomingTaskTile extends StatelessWidget {
   const UpcomingTaskTile({
@@ -17,6 +18,7 @@ class UpcomingTaskTile extends StatelessWidget {
     required this.onComplete,
     required this.onDelete,
     required this.priority,
+    this.subtasks = const [],
   });
   final String id;
   final String title;
@@ -26,6 +28,7 @@ class UpcomingTaskTile extends StatelessWidget {
   final VoidCallback onComplete;
   final VoidCallback onDelete;
   final TaskPriority priority;
+  final List<Subtask> subtasks;
 
   @override
   Widget build(BuildContext context) {
@@ -116,12 +119,26 @@ class UpcomingTaskTile extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.schedule, color: AppTheme.purple2, size: 15.sp),
-                  2.horizontalSpace,
                   Text(
                     formatTime(dateTime),
                     style: TextStyle(fontSize: 14.sp, color: AppTheme.purple2),
                   ),
+                  if (subtasks.isNotEmpty) ...[
+                    10.horizontalSpace,
+                    Icon(
+                      Icons.checklist_rounded,
+                      color: AppTheme.purple2,
+                      size: 15.sp,
+                    ),
+                    2.horizontalSpace,
+                    Text(
+                      '${subtasks.where((s) => s.isCompleted).length}/${subtasks.length}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: AppTheme.purple2,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -131,5 +148,3 @@ class UpcomingTaskTile extends StatelessWidget {
     );
   }
 }
-
-

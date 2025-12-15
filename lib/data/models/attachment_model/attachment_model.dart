@@ -6,6 +6,7 @@ part 'attachment_model.g.dart';
 
 @freezed
 abstract class AttachmentModel with _$AttachmentModel {
+  @JsonSerializable(explicitToJson: true)
   const factory AttachmentModel({
     required String id,
     required String fileName,
@@ -18,5 +19,3 @@ abstract class AttachmentModel with _$AttachmentModel {
   factory AttachmentModel.fromJson(Map<String, dynamic> json) =>
       _$AttachmentModelFromJson(json);
 }
-
-

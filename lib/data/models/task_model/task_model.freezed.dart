@@ -224,8 +224,8 @@ return $default(_that.id,_that.notificationId,_that.title,_that.description,_tha
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _TaskModel implements TaskModel {
   const _TaskModel({required this.id, required this.notificationId, required this.title, this.description, required this.dueDate, this.isCompleted = false, this.alarmSet = false, this.remind5MinEarly = false, this.priority = TaskPriority.medium, this.category = TaskCategory.other, final  List<String> tags = const [], this.recurringType = RecurringType.none, this.recurringInterval = 1, final  List<SubtaskModel> subtasks = const [], this.totalTimeSpent = 0, final  List<TimeLogModel> timeLogs = const [], this.timerStartedAt, this.isTimerRunning = false, final  List<AttachmentModel> attachments = const []}): _tags = tags,_subtasks = subtasks,_timeLogs = timeLogs,_attachments = attachments;
   factory _TaskModel.fromJson(Map<String, dynamic> json) => _$TaskModelFromJson(json);

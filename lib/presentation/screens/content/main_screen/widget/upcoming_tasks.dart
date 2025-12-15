@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 import '../../../../../domain/entities/task.dart';
-import 'package:well_task_app/core/utils/config/alarms_services.dart';
 import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../../task_page/task_page.dart';
@@ -49,6 +48,7 @@ class UpcomingTasks extends ConsumerWidget {
             description: task.description ?? '',
             dateTime: task.dueDate,
             priority: task.priority,
+            subtasks: task.subtasks,
             onTap: () {
               showCustomDialog(
                 context: context,
@@ -68,12 +68,6 @@ class UpcomingTasks extends ConsumerWidget {
                 onYes: () {
                   HapticFeedback.mediumImpact();
                   ref.read(taskListProvider.notifier).removeTask(id: task.id);
-                  AlarmServicesImpl().cancelTaskNotification(
-                    notificationId: task.notificationId,
-                    dateTime: task.dueDate,
-                    title: task.title,
-                    context: context,
-                  );
                   ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -91,5 +85,3 @@ class UpcomingTasks extends ConsumerWidget {
     );
   }
 }
-
-

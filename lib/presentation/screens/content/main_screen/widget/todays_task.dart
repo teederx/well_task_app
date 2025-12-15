@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../domain/entities/task.dart';
-import 'package:well_task_app/core/utils/config/alarms_services.dart';
 import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../../task_page/task_page.dart';
@@ -14,8 +13,6 @@ import 'empty_state_widget.dart';
 import 'show_custom_dialog.dart';
 import 'task_formats.dart';
 import 'tile_animation.dart';
-
-final notificationService = AlarmServicesImpl();
 
 class TodaysTasks extends ConsumerWidget {
   const TodaysTasks({super.key, required this.tasksList});
@@ -59,6 +56,7 @@ class TodaysTasks extends ConsumerWidget {
             dateTime: task.dueDate,
             isCompleted: task.isCompleted,
             priority: task.priority,
+            subtasks: task.subtasks,
             onTap: () {
               HapticFeedback.lightImpact();
               ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
@@ -78,12 +76,6 @@ class TodaysTasks extends ConsumerWidget {
                   onYes: () {
                     HapticFeedback.mediumImpact();
                     ref.read(taskListProvider.notifier).removeTask(id: task.id);
-                    notificationService.cancelTaskNotification(
-                      notificationId: task.notificationId,
-                      dateTime: task.dueDate,
-                      title: task.title,
-                      context: context,
-                    );
                     ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -102,5 +94,3 @@ class TodaysTasks extends ConsumerWidget {
     );
   }
 }
-
-

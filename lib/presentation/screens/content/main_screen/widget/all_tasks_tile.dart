@@ -11,6 +11,7 @@ import 'package:well_task_app/domain/entities/task_enums.dart';
 import 'package:well_task_app/presentation/widgets/glassmorphic_container.dart';
 
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/domain/entities/subtask.dart';
 
 class AllTasksTile extends StatelessWidget {
   const AllTasksTile({
@@ -23,6 +24,7 @@ class AllTasksTile extends StatelessWidget {
     required this.id,
     required this.handleMenuSelection,
     required this.priority,
+    this.subtasks = const [],
   });
   final String id;
   final String title;
@@ -32,6 +34,7 @@ class AllTasksTile extends StatelessWidget {
   final VoidCallback onTap;
   final void Function(String value) handleMenuSelection;
   final TaskPriority priority;
+  final List<Subtask> subtasks;
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +239,22 @@ class AllTasksTile extends StatelessWidget {
                         color: isOverdue ? AppTheme.red : AppTheme.purple2,
                       ),
                     ),
+                    if (subtasks.isNotEmpty) ...[
+                      10.horizontalSpace,
+                      Icon(
+                        Icons.checklist_rounded,
+                        color: AppTheme.purple2,
+                        size: 15.sp,
+                      ),
+                      2.horizontalSpace,
+                      Text(
+                        '${subtasks.where((s) => s.isCompleted).length}/${subtasks.length}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppTheme.purple2,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -266,5 +285,3 @@ class AllTasksTile extends StatelessWidget {
     );
   }
 }
-
-
