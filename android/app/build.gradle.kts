@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+// 1. Load the keystore properties safely
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -29,17 +39,35 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         multiDexEnabled = true
-        minSdk = flutter.minSdkVersion // flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    // 2. Define Signing Configs BEFORE Build Types
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            
+            // Handle the file path safely
+            val storeFileVal = keystoreProperties.getProperty("storeFile")
+            if (storeFileVal != null) {
+                storeFile = file(storeFileVal)
+            }
+            
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            // 3. Correctly reference the signing config
+            signingConfig = signingConfigs.getByName("release")
+            // 4. Use 'is' prefix for boolean properties
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
@@ -54,9 +82,9 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     
     // Force specific version of androidx.activity to avoid AGP 8.9.1 requirement
-    val activity_version = "1.9.3"
-    implementation("androidx.activity:activity:$activity_version")
-    implementation("androidx.activity:activity-ktx:$activity_version")
+    val activityVersion = "1.9.3"
+    implementation("androidx.activity:activity:$activityVersion")
+    implementation("androidx.activity:activity-ktx:$activityVersion")
 }
 
 configurations.all {
