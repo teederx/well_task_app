@@ -100,6 +100,32 @@ class FilterBar extends ConsumerWidget {
                   ),
                 ),
               ),
+              if (filterState.selectedPriority != null)
+                Padding(
+                  padding: EdgeInsets.only(right: 8.w),
+                  child: FilterChip(
+                    label: const Text('All priorities'),
+                    selected: filterState.selectedPriority == null,
+                    onSelected: (_) => filterNotifier.setPriority(null),
+                    backgroundColor: Colors.white,
+                    selectedColor: AppTheme.purple,
+                    labelStyle: TextStyle(
+                      color:
+                          filterState.selectedPriority == null
+                              ? Colors.white
+                              : Colors.black,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                      side: BorderSide(
+                        color:
+                            filterState.selectedPriority == null
+                                ? Colors.transparent
+                                : Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                ),
               // Date Filter
               Padding(
                 padding: EdgeInsets.only(right: 8.w),

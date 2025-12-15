@@ -59,11 +59,15 @@ class LocalNotificationService {
       channelDescription: 'Channel for task reminders',
       importance: Importance.max,
       priority: Priority.high,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('alarm'),
+      enableVibration: true,
     );
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      sound: 'alarm.wav',
     );
     const details = NotificationDetails(
       android: androidDetails,
@@ -102,11 +106,15 @@ class LocalNotificationService {
       channelDescription: 'Channel for daily reminders',
       importance: Importance.max,
       priority: Priority.high,
+      playSound: true,
+      sound: RawResourceAndroidNotificationSound('alarm'),
+      enableVibration: true,
     );
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
+      sound: 'alarm.wav',
     );
     const details = NotificationDetails(
       android: androidDetails,

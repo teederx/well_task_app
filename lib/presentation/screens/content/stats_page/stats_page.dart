@@ -2,7 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
+
 import '../../../../domain/entities/task_enums.dart';
 import '../../../providers/tasks_providers/task_list/task_list_provider.dart';
 
@@ -16,6 +18,16 @@ class StatsPage extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: SvgPicture.asset(
+            'assets/svg/icons/Arrow - Left.svg',
+            width: 22.w,
+            height: 22.w,
+          ),
+          padding: EdgeInsets.all(10.w), // optional, to tune touch target
+          constraints: const BoxConstraints(), // lets your width/height apply
+        ),
         title: Text(
           'Statistics',
           style: TextStyle(
@@ -335,5 +347,3 @@ class _Legend extends StatelessWidget {
     );
   }
 }
-
-

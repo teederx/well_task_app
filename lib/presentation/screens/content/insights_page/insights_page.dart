@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import 'package:well_task_app/data/models/ai_insight_model/ai_insight_model.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/insight_card.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/productivity_score_card.dart';
-import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 import '../../../providers/ai_insights/ai_insights_provider.dart';
 
@@ -27,7 +27,7 @@ class InsightsPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              20.verticalSpace,
+              10.verticalSpace,
               // Header
               Row(
                 children: [
@@ -286,5 +286,3 @@ class InsightsPage extends ConsumerWidget {
     );
   }
 }
-
-
