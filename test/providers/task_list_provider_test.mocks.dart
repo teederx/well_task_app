@@ -192,4 +192,3 @@ class MockToggleAlarmUsecase extends _i1.Mock
           )
           as _i3.Future<_i4.Either<_i5.Failure, void>>);
 }
-

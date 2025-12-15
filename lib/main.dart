@@ -9,7 +9,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:url_strategy/url_strategy.dart';
 
 import 'data/data_sources/firebase_options.dart';
-import 'presentation/providers/theme_provider.dart';
+import 'presentation/providers/theme/theme_provider.dart';
 import 'core/utils/config/local_notification_service.dart';
 import 'core/utils/config/router/route_provider.dart';
 import 'core/utils/constants/app_theme.dart';

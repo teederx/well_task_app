@@ -353,5 +353,3 @@ as List<AttachmentModel>,
 }
 
 // dart format on
-
-

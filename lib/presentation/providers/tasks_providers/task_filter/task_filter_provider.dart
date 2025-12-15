@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart'; // For DateRange
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../domain/entities/task.dart';
 import '../../../../domain/entities/task_enums.dart';
@@ -99,7 +100,7 @@ class TaskFilterState {
 }
 
 @riverpod
-Future<List<Task>> filteredTaskList(FilteredTaskListRef ref) async {
+Future<List<Task>> filteredTaskList(Ref ref) async {
   final taskListAsync = ref.watch(taskListProvider);
   final filterState = ref.watch(taskFilterProvider);
 

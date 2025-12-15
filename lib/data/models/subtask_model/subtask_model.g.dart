@@ -26,5 +26,3 @@ Map<String, dynamic> _$SubtaskModelToJson(_SubtaskModel instance) =>
       'createdAt': instance.createdAt.toIso8601String(),
       'completedAt': instance.completedAt?.toIso8601String(),
     };
-
-

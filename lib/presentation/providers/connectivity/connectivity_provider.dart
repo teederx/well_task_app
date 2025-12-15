@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'connectivity_provider.g.dart';
@@ -12,7 +13,7 @@ class ConnectivityStatus extends _$ConnectivityStatus {
 }
 
 @riverpod
-bool isOffline(IsOfflineRef ref) {
+bool isOffline(Ref ref) {
   final connectivity = ref.watch(connectivityStatusProvider);
   return connectivity.when(
     data: (results) => results.contains(ConnectivityResult.none),

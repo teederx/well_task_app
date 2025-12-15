@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:well_task_app/presentation/providers/connectivity_provider.dart';
+import 'package:well_task_app/presentation/providers/connectivity/connectivity_provider.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/widget/offline_indicator.dart';
 
 void main() {

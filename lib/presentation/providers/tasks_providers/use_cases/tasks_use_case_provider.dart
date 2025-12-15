@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:well_task_app/presentation/providers/tasks_providers/task_list/task_list_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../data/repositories/tasks_repository/provider/tasks_repository_provider.dart';
 import '../../../../domain/usecases/tasks/add_task_usecase.dart';
 import '../../../../domain/usecases/tasks/edit_task_usecase.dart';
@@ -11,33 +11,31 @@ import '../../../../domain/usecases/tasks/toggle_complete_usecase.dart';
 part 'tasks_use_case_provider.g.dart';
 
 @riverpod
-GetTasksUsecase getTasksUseCase(GetTasksUseCaseRef ref) {
+GetTasksUsecase getTasksUseCase(Ref ref) {
   return GetTasksUsecase(ref.watch(tasksRepositoryProvider));
 }
 
 @riverpod
-AddTaskUsecase addTaskUseCase(AddTaskUseCaseRef ref) {
+AddTaskUsecase addTaskUseCase(Ref ref) {
   return AddTaskUsecase(ref.watch(tasksRepositoryProvider));
 }
 
 @riverpod
-EditTaskUsecase editTaskUseCase(EditTaskUseCaseRef ref) {
+EditTaskUsecase editTaskUseCase(Ref ref) {
   return EditTaskUsecase(ref.watch(tasksRepositoryProvider));
 }
 
 @riverpod
-RemoveTaskUsecase removeTaskUseCase(RemoveTaskUseCaseRef ref) {
+RemoveTaskUsecase removeTaskUseCase(Ref ref) {
   return RemoveTaskUsecase(ref.watch(tasksRepositoryProvider));
 }
 
 @riverpod
-ToggleCompleteUsecase toggleCompleteUseCase(ToggleCompleteUseCaseRef ref) {
+ToggleCompleteUsecase toggleCompleteUseCase(Ref ref) {
   return ToggleCompleteUsecase(ref.watch(tasksRepositoryProvider));
 }
 
 @riverpod
-ToggleAlarmUsecase toggleAlarmUseCase(ToggleAlarmUseCaseRef ref) {
+ToggleAlarmUsecase toggleAlarmUseCase(Ref ref) {
   return ToggleAlarmUsecase(ref.watch(tasksRepositoryProvider));
 }
-
-

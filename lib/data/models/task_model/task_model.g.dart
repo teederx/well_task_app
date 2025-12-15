@@ -98,5 +98,3 @@ const _$RecurringTypeEnumMap = {
   RecurringType.weekly: 'weekly',
   RecurringType.monthly: 'monthly',
 };
-
-

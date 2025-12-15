@@ -4,10 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:well_task_app/data/models/ai_insight_model/ai_insight_model.dart';
-import 'package:well_task_app/presentation/providers/ai_insights_provider.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/insight_card.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/productivity_score_card.dart';
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
+
+import '../../../providers/ai_insights/ai_insights_provider.dart';
 
 class InsightsPage extends ConsumerWidget {
   static const String routeName = 'insights';

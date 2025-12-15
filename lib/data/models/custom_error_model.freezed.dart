@@ -284,5 +284,3 @@ as String,
 }
 
 // dart format on
-
-
