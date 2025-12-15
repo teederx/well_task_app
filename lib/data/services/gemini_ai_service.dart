@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
+import 'package:well_task_app/domain/entities/task.dart';
 import 'package:well_task_app/data/models/ai_insight_model/ai_insight_model.dart';
 
 class GeminiAIService {
@@ -20,7 +20,7 @@ class GeminiAIService {
     }
   }
 
-  Future<AIInsightModel> generateInsights(List<TaskModel> tasks) async {
+  Future<AIInsightModel> generateInsights(List<Task> tasks) async {
     if (!_isInitialized) {
       throw Exception('Gemini API Key is missing.');
     }
@@ -58,7 +58,7 @@ class GeminiAIService {
     }
   }
 
-  String _buildPrompt(List<TaskModel> tasks) {
+  String _buildPrompt(List<Task> tasks) {
     StringBuffer buffer = StringBuffer();
     buffer.writeln(
       'Analyze the following task list and provide a productivity score (0-100), a short summary, and a list of 3-5 specific recommendations.',
@@ -82,3 +82,5 @@ class GeminiAIService {
     return buffer.toString();
   }
 }
+
+

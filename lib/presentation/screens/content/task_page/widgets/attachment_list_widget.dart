@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/data/models/attachment_model/attachment_model.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import '../../../../../domain/entities/attachment.dart';
 
 class AttachmentListWidget extends StatelessWidget {
-  final List<AttachmentModel> attachments;
-  final Function(AttachmentModel) onDelete;
+  final List<Attachment> attachments;
+  final Function(Attachment) onDelete;
   final Function() onAddAttachment;
 
   const AttachmentListWidget({
@@ -94,7 +94,7 @@ class AttachmentListWidget extends StatelessWidget {
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 4,
                               ),
                             ],
@@ -137,3 +137,5 @@ class AttachmentListWidget extends StatelessWidget {
     );
   }
 }
+
+

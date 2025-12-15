@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/presentation/providers/theme_provider.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 /// Theme toggle widget for the profile page
 /// Allows users to switch between Light, Dark, and System themes
@@ -120,3 +120,5 @@ class ThemeToggle extends ConsumerWidget {
     }
   }
 }
+
+

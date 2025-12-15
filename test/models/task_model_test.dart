@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:well_task_app/data/models/task_model/task_model.dart';
-import 'package:well_task_app/data/models/task_model/task_enums.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 
 void main() {
   group('TaskModel', () {
@@ -66,3 +66,4 @@ void main() {
     });
   });
 }
+

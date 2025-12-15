@@ -27,3 +27,5 @@ class AiInsights extends _$AiInsights {
     }
   }
 }
+
+

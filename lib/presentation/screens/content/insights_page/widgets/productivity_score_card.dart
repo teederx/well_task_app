@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class ProductivityScoreCard extends StatelessWidget {
   final double score;
@@ -20,7 +20,7 @@ class ProductivityScoreCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -41,7 +41,7 @@ class ProductivityScoreCard extends StatelessWidget {
               ),
             ),
             progressColor: AppTheme.purple,
-            backgroundColor: AppTheme.purple.withOpacity(0.1),
+            backgroundColor: AppTheme.purple.withValues(alpha: 0.1),
             circularStrokeCap: CircularStrokeCap.round,
             animation: true,
             animationDuration: 1200,
@@ -83,3 +83,5 @@ class ProductivityScoreCard extends StatelessWidget {
     return 'Let\'s get started. Create some tasks to track progress.';
   }
 }
+
+

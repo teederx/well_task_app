@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
+
 import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/widget/show_custom_dialog.dart';
 import 'package:well_task_app/presentation/screens/content/task_page/task_page.dart';
-import 'package:well_task_app/utils/config/formatted_date_time.dart';
-import 'package:well_task_app/utils/config/haptic_service.dart';
-import 'package:well_task_app/utils/constants/priority_constants.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/core/utils/config/haptic_service.dart';
+import 'package:well_task_app/core/utils/constants/priority_constants.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 import 'package:well_task_app/presentation/widgets/glassmorphic_container.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class AllTasksTile extends StatelessWidget {
   const AllTasksTile({
@@ -42,6 +43,7 @@ class AllTasksTile extends StatelessWidget {
       confirmDismiss: (direction) async {
         // Trigger haptic feedback
         await HapticService.mediumImpact();
+        if (!context.mounted) return false;
 
         if (direction == DismissDirection.startToEnd) {
           // Right swipe - Complete task
@@ -264,3 +266,5 @@ class AllTasksTile extends StatelessWidget {
     );
   }
 }
+
+

@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import '../../../../providers/tasks_providers/notifications/notifications_provider.dart';
 import '../../../../providers/user/user_provider.dart';
 import '../../notifications_page/notifications_page.dart';
@@ -79,3 +79,5 @@ class Appbar extends ConsumerWidget {
     );
   }
 }
+
+

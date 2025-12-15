@@ -73,3 +73,5 @@ class DefaultFirebaseOptions {
     iosBundleId: dotenv.env['IOSBUNDLEID'] as String,
   );
 }
+
+

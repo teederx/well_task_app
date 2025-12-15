@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
-import '../../../../data/models/task_model/task_model.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import '../../../../domain/entities/task.dart';
 import '../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../main_screen/widget/upcoming_task_tile.dart';
 
@@ -25,7 +25,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     _selectedDay = _focusedDay;
   }
 
-  List<TaskModel> _getTasksForDay(List<TaskModel> allTasks, DateTime day) {
+  List<Task> _getTasksForDay(List<Task> allTasks, DateTime day) {
     return allTasks.where((task) {
       return isSameDay(task.dueDate, day);
     }).toList();
@@ -70,7 +70,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                     ),
                   ],
                 ),
-                child: TableCalendar<TaskModel>(
+                child: TableCalendar<Task>(
                   firstDay: DateTime.utc(2020, 10, 16),
                   lastDay: DateTime.utc(2030, 3, 14),
                   focusedDay: _focusedDay,
@@ -209,3 +209,5 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     );
   }
 }
+
+

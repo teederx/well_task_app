@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
+import 'package:well_task_app/domain/entities/task.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 import 'package:well_task_app/presentation/screens/content/task_page/widgets/time_tracker_widget.dart';
 
 void main() {
   final now = DateTime.now();
-  final baseTask = TaskModel(
+  final baseTask = Task(
     id: '1',
     notificationId: 1,
     title: 'Test',
     dueDate: now,
+    priority: TaskPriority.medium,
+    category: TaskCategory.other,
+    recurringType: RecurringType.none,
   );
 
   testWidgets('TimeTrackerWidget renders correctly', (
@@ -53,7 +57,7 @@ void main() {
   testWidgets('TimeTrackerWidget shows Stop Timer when running', (
     WidgetTester tester,
   ) async {
-    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.physicalSize = const Size(2400, 2400);
     tester.view.devicePixelRatio = 3.0;
     addTearDown(() {
       tester.view.resetPhysicalSize();
@@ -75,9 +79,11 @@ void main() {
           builder: (_, child) {
             return MaterialApp(
               home: Scaffold(
-                body: TimeTrackerWidget(
-                  task: runningTask,
-                  onTimerChanged: (_, __, ___, ____) {},
+                body: SingleChildScrollView(
+                  child: TimeTrackerWidget(
+                    task: runningTask,
+                    onTimerChanged: (_, __, ___, ____) {},
+                  ),
                 ),
               ),
             );
@@ -89,3 +95,4 @@ void main() {
     expect(find.text('Stop Timer'), findsOneWidget);
   });
 }
+

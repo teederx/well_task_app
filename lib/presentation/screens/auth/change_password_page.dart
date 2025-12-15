@@ -6,8 +6,8 @@ import 'package:well_task_app/presentation/providers/user/user_provider.dart';
 import 'package:well_task_app/presentation/screens/auth/widgets/custom_form_field.dart';
 
 import '../../../data/models/custom_error_model.dart';
-import '../../../utils/config/show_confirm_dialog.dart';
-import '../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class ChangePasswordPage extends ConsumerStatefulWidget {
   static const String routeSettings = '/ChangePasswordPage';
@@ -229,3 +229,5 @@ class _ChangePasswordPageState extends ConsumerState<ChangePasswordPage> {
     );
   }
 }
+
+

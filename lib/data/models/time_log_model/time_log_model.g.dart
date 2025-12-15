@@ -26,3 +26,5 @@ Map<String, dynamic> _$TimeLogModelToJson(_TimeLogModel instance) =>
       'duration': instance.duration,
       'note': instance.note,
     };
+
+

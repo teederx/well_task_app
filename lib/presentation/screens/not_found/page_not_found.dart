@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
-import 'presentation/screens/content/main_screen/main_screen.dart';
+import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
 
 class PageNotFound extends StatelessWidget {
   const PageNotFound({super.key, required this.eMsg});
@@ -27,10 +27,7 @@ class PageNotFound extends StatelessWidget {
                 onPressed: () {
                   GoRouter.of(context).goNamed(MainScreen.routeName);
                 },
-                child: const Text(
-                  'Home',
-                  style: TextStyle(fontSize: 20),
-                ),
+                child: const Text('Home', style: TextStyle(fontSize: 20)),
               ),
             ],
           ),
@@ -39,3 +36,5 @@ class PageNotFound extends StatelessWidget {
     );
   }
 }
+
+

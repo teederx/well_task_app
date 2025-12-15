@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum TaskPriority { low, medium, high }
+
 enum TaskCategory {
   work,
   personal,
@@ -100,3 +102,5 @@ enum RecurringType {
     }
   }
 }
+
+

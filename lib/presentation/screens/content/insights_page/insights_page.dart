@@ -7,7 +7,7 @@ import 'package:well_task_app/data/models/ai_insight_model/ai_insight_model.dart
 import 'package:well_task_app/presentation/providers/ai_insights_provider.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/insight_card.dart';
 import 'package:well_task_app/presentation/screens/content/insights_page/widgets/productivity_score_card.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class InsightsPage extends ConsumerWidget {
   static const String routeName = 'insights';
@@ -73,7 +73,7 @@ class InsightsPage extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(16.r),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.purple.withOpacity(0.3),
+                        color: AppTheme.purple.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -285,3 +285,5 @@ class InsightsPage extends ConsumerWidget {
     );
   }
 }
+
+

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hive/hive.dart';
 
 import '../../../domain/repositories/auth_repository.dart';
-import '../../../utils/constants/firebase_constants.dart';
+import 'package:well_task_app/core/utils/constants/firebase_constants.dart';
 import '../../models/app_user/app_user_model.dart';
 import '../../models/custom_error_model.dart';
 import '../handle_exception.dart';
@@ -182,3 +182,5 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
+
+

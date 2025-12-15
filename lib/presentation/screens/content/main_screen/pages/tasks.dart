@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
+import 'package:well_task_app/domain/entities/task.dart';
 
 import '../../../../providers/tasks_providers/task_filter/task_filter_provider.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
@@ -16,7 +16,7 @@ class Tasks extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AsyncValue<List<TaskModel>>>(taskListProvider, (previous, next) {
+    ref.listen<AsyncValue<List<Task>>>(taskListProvider, (previous, next) {
       next.whenOrNull(
         error: (e, st) {
           if (!next.isLoading) {
@@ -115,3 +115,5 @@ class Tasks extends ConsumerWidget {
     );
   }
 }
+
+

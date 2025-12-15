@@ -14,7 +14,6 @@ abstract class AuthRepository {
 
   Future<void> signOut();
 
-  //TODO: check if you can input the old password and new password
   Future<void> changePassword({required String password});
 
   Future<void> sendPasswordResetEmail({required String email});
@@ -27,3 +26,5 @@ abstract class AuthRepository {
     required String password,
   });
 }
+
+

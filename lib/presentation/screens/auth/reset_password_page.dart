@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../data/models/custom_error_model.dart';
-import '../../../utils/config/show_confirm_dialog.dart';
-import '../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import '../../providers/auth/forgot_password/forgot_password_provider.dart';
 import 'widgets/custom_form_field.dart';
 
@@ -130,3 +130,5 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
     );
   }
 }
+
+

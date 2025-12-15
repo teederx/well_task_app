@@ -3,15 +3,12 @@ import 'package:uuid/uuid.dart';
 import 'package:well_task_app/data/models/subtask_model/subtask_model.dart';
 import 'package:well_task_app/data/models/time_log_model/time_log_model.dart';
 import 'package:well_task_app/data/models/attachment_model/attachment_model.dart';
-
-import 'task_enums.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 
 part 'task_model.freezed.dart';
 part 'task_model.g.dart';
 
 const Uuid uuid = Uuid();
-
-enum TaskPriority { low, medium, high }
 
 @freezed
 abstract class TaskModel with _$TaskModel {
@@ -61,7 +58,7 @@ abstract class TaskModel with _$TaskModel {
     List<AttachmentModel> attachments = const [],
   }) {
     return TaskModel(
-      id: id, // generate the uuid here
+      id: id,
       notificationId: notificationId,
       title: title,
       description: description,
@@ -83,4 +80,4 @@ abstract class TaskModel with _$TaskModel {
   }
 }
 
-// ✅ Helper function outside
+

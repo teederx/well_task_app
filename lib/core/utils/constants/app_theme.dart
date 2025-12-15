@@ -408,3 +408,5 @@ class AppTheme {
   @Deprecated('Use lightTheme instead')
   static ThemeData theme = lightTheme;
 }
+
+

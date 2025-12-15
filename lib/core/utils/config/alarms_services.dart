@@ -9,8 +9,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:well_task_app/utils/config/formatted_date_time.dart';
-import 'package:well_task_app/utils/config/local_notification_service.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/core/utils/config/local_notification_service.dart';
 
 LocalNotificationService _lNS = LocalNotificationService();
 
@@ -176,3 +176,5 @@ class AlarmServicesImpl implements AlarmServices {
       );
   }
 }
+
+

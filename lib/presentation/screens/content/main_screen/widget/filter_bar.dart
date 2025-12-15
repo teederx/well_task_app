@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../data/models/task_model/task_enums.dart';
-import '../../../../../../utils/constants/app_theme.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
-import 'package:well_task_app/utils/constants/priority_constants.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
+
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/priority_constants.dart';
 import '../../../../providers/tasks_providers/task_filter/task_filter_provider.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 
@@ -16,15 +16,10 @@ class FilterBar extends ConsumerWidget {
     final filterState = ref.watch(taskFilterProvider);
     final filterNotifier = ref.read(taskFilterProvider.notifier);
     final tasksAsync = ref.watch(taskListProvider);
-    final tags =
-        tasksAsync.maybeWhen(
-          data: (tasks) => tasks
-              .expand((t) => t.tags)
-              .toSet()
-              .toList()
-            ..sort(),
-          orElse: () => <String>[],
-        );
+    final tags = tasksAsync.maybeWhen(
+      data: (tasks) => tasks.expand((t) => t.tags).toSet().toList()..sort(),
+      orElse: () => <String>[],
+    );
 
     return Column(
       children: [
@@ -337,3 +332,5 @@ class FilterBar extends ConsumerWidget {
     );
   }
 }
+
+

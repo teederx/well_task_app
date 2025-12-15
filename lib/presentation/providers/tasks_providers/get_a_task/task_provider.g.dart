@@ -6,7 +6,7 @@ part of 'task_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$taskHash() => r'dd2a1602af70d95ae44e79bfe99ce6288c934771';
+String _$taskHash() => r'b36d32c2592f9d14e1faf04c514de536e3388892';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const taskProvider = TaskFamily();
 
 /// See also [task].
-class TaskFamily extends Family<TaskModel> {
+class TaskFamily extends Family<Task> {
   /// See also [task].
   const TaskFamily();
 
@@ -64,7 +64,7 @@ class TaskFamily extends Family<TaskModel> {
 }
 
 /// See also [task].
-class TaskProvider extends AutoDisposeProvider<TaskModel> {
+class TaskProvider extends AutoDisposeProvider<Task> {
   /// See also [task].
   TaskProvider({required String id})
     : this._internal(
@@ -91,7 +91,7 @@ class TaskProvider extends AutoDisposeProvider<TaskModel> {
   final String id;
 
   @override
-  Override overrideWith(TaskModel Function(TaskRef provider) create) {
+  Override overrideWith(Task Function(TaskRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: TaskProvider._internal(
@@ -107,7 +107,7 @@ class TaskProvider extends AutoDisposeProvider<TaskModel> {
   }
 
   @override
-  AutoDisposeProviderElement<TaskModel> createElement() {
+  AutoDisposeProviderElement<Task> createElement() {
     return _TaskProviderElement(this);
   }
 
@@ -127,12 +127,12 @@ class TaskProvider extends AutoDisposeProvider<TaskModel> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin TaskRef on AutoDisposeProviderRef<TaskModel> {
+mixin TaskRef on AutoDisposeProviderRef<Task> {
   /// The parameter `id` of this provider.
   String get id;
 }
 
-class _TaskProviderElement extends AutoDisposeProviderElement<TaskModel>
+class _TaskProviderElement extends AutoDisposeProviderElement<Task>
     with TaskRef {
   _TaskProviderElement(super.provider);
 
@@ -142,3 +142,5 @@ class _TaskProviderElement extends AutoDisposeProviderElement<TaskModel>
 
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+
+

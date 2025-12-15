@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'widget/button_data.dart';
-import 'widget/nav_to_auth_button.dart';
-import 'widget/top_image.dart';
+import '../../widgets/button_data.dart';
+import '../../widgets/nav_to_auth_button.dart';
+import '../../widgets/top_image.dart';
 
 class OnboardingScreen extends StatelessWidget {
   static const String routeSetting = '/';
@@ -78,3 +78,5 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../data/models/task_model/task_model.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 
 class PriorityConstants {
   /// Get color for a given task priority
@@ -39,3 +38,5 @@ class PriorityConstants {
     }
   }
 }
+
+

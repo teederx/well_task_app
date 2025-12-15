@@ -2,16 +2,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:well_task_app/utils/firebase_error.dart';
+import 'package:well_task_app/core/utils/firebase_error.dart';
 
-import '../../../data/repositories/auth_repository/provider/auth_repository_provider.dart';
-import '../../../onboarding_screen.dart';
-import '../../../page_not_found.dart';
-import '../../../presentation/screens/auth/change_password_page.dart';
-import '../../../presentation/screens/auth/reset_password_page.dart';
-import '../../../presentation/screens/content/main_screen/main_screen.dart';
-import '../../../presentation/screens/content/notifications_page/notifications_page.dart';
-import '../../../presentation/screens/content/insights_page/insights_page.dart';
+import '../../../../data/repositories/auth_repository/provider/auth_repository_provider.dart';
+import '../../../../presentation/screens/onboarding/onboarding_screen.dart';
+import '../../../../presentation/screens/not_found/page_not_found.dart';
+import '../../../../presentation/screens/auth/change_password_page.dart';
+import '../../../../presentation/screens/auth/reset_password_page.dart';
+import '../../../../presentation/screens/content/main_screen/main_screen.dart';
+import '../../../../presentation/screens/content/notifications_page/notifications_page.dart';
+import '../../../../presentation/screens/content/insights_page/insights_page.dart';
 
 part 'route_provider.g.dart';
 
@@ -98,3 +98,4 @@ GoRouter router(Ref ref) {
         (context, state) => PageNotFound(eMsg: state.error.toString()),
   );
 }
+

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/presentation/widgets/custom_page_routes.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 Future<void> showCustomDialog({
   required BuildContext context,
@@ -34,3 +34,5 @@ Future<void> showCustomDialog({
     ),
   );
 }
+
+

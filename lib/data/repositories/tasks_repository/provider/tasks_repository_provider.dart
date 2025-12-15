@@ -10,3 +10,4 @@ part 'tasks_repository_provider.g.dart';
 TasksRepository tasksRepository(Ref ref) {
   return TasksRepositoryImpl();
 }
+

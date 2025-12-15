@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:well_task_app/presentation/screens/content/task_page/task_page.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
-import 'package:well_task_app/utils/config/haptic_service.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/haptic_service.dart';
 
 import 'show_custom_dialog.dart';
 
@@ -102,3 +102,5 @@ class _FabState extends State<Fab> with SingleTickerProviderStateMixin {
     );
   }
 }
+
+

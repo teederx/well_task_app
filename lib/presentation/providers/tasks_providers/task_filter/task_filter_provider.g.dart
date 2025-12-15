@@ -6,25 +6,24 @@ part of 'task_filter_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$filteredTaskListHash() => r'4c16077b2cb3a12c3eff10d1946c35cf9a0eec7f';
+String _$filteredTaskListHash() => r'7e9756318e2c5930db85bca543b8ae209f9f903a';
 
 /// See also [filteredTaskList].
 @ProviderFor(filteredTaskList)
-final filteredTaskListProvider =
-    AutoDisposeFutureProvider<List<TaskModel>>.internal(
-      filteredTaskList,
-      name: r'filteredTaskListProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$filteredTaskListHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final filteredTaskListProvider = AutoDisposeFutureProvider<List<Task>>.internal(
+  filteredTaskList,
+  name: r'filteredTaskListProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$filteredTaskListHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef FilteredTaskListRef = AutoDisposeFutureProviderRef<List<TaskModel>>;
+typedef FilteredTaskListRef = AutoDisposeFutureProviderRef<List<Task>>;
 String _$taskFilterHash() => r'7496024a2fd4f0714c92c9cc9e0978076658cb8f';
 
 /// See also [TaskFilter].
@@ -44,3 +43,5 @@ final taskFilterProvider =
 typedef _$TaskFilter = AutoDisposeNotifier<TaskFilterState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+
+

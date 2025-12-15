@@ -10,3 +10,4 @@ abstract class CustomErrorModel with _$CustomErrorModel{
     @Default('') String message,
   }) = _CustomErrorModel;
 }
+

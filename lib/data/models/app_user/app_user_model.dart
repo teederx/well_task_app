@@ -28,3 +28,5 @@ abstract class AppUserModel with _$AppUserModel {
   }
 }
 
+
+

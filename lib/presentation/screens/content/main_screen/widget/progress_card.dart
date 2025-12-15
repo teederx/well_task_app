@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/flutter_percent_indicator.dart';
 import 'package:well_task_app/presentation/widgets/shimmer_effect.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class ProgressCard extends StatefulWidget {
   const ProgressCard({
@@ -178,3 +178,5 @@ class _ProgressCardState extends State<ProgressCard>
     );
   }
 }
+
+

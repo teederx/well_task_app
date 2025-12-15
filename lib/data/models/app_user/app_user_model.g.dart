@@ -21,3 +21,5 @@ Map<String, dynamic> _$AppUserModelToJson(_AppUserModel instance) =>
       'email': instance.email,
       'phone': instance.phone,
     };
+
+

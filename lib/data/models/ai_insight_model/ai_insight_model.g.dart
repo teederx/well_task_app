@@ -24,3 +24,5 @@ Map<String, dynamic> _$AIInsightModelToJson(_AIInsightModel instance) =>
       'recommendations': instance.recommendations,
       'generatedAt': instance.generatedAt.toIso8601String(),
     };
+
+

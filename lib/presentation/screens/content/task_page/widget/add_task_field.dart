@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/main_screen.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class AddTaskField extends StatelessWidget {
   const AddTaskField({
@@ -83,3 +83,5 @@ class AddTaskField extends StatelessWidget {
     );
   }
 }
+
+

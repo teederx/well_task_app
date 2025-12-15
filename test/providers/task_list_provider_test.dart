@@ -1,33 +1,68 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:well_task_app/data/models/task_model/task_enums.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
-import 'package:well_task_app/data/repositories/tasks_repository/provider/tasks_repository_provider.dart';
-import 'package:well_task_app/domain/repositories/tasks_repository.dart';
+import 'package:fpdart/fpdart.dart' hide Task;
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:well_task_app/core/errors/failure.dart';
+
+import 'package:well_task_app/domain/entities/task.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
+
+// Use Cases
+import 'package:well_task_app/domain/usecases/tasks/get_tasks_usecase.dart';
+import 'package:well_task_app/domain/usecases/tasks/add_task_usecase.dart';
+import 'package:well_task_app/domain/usecases/tasks/edit_task_usecase.dart';
+import 'package:well_task_app/domain/usecases/tasks/remove_task_usecase.dart';
+import 'package:well_task_app/domain/usecases/tasks/toggle_complete_usecase.dart';
+import 'package:well_task_app/domain/usecases/tasks/toggle_alarm_usecase.dart';
+
+// Providers
+import 'package:well_task_app/presentation/providers/tasks_providers/use_cases/tasks_use_case_provider.dart';
 import 'package:well_task_app/presentation/providers/tasks_providers/task_list/task_list_provider.dart';
 
-class MockTasksRepository extends Mock implements TasksRepository {}
+import 'task_list_provider_test.mocks.dart';
 
-class FakeTaskModel extends Fake implements TaskModel {}
-
+@GenerateNiceMocks([
+  MockSpec<GetTasksUsecase>(),
+  MockSpec<AddTaskUsecase>(),
+  MockSpec<EditTaskUsecase>(),
+  MockSpec<RemoveTaskUsecase>(),
+  MockSpec<ToggleCompleteUsecase>(),
+  MockSpec<ToggleAlarmUsecase>(),
+])
 void main() {
-  late MockTasksRepository mockRepository;
+  late MockGetTasksUsecase mockGetTasksUsecase;
+  late MockAddTaskUsecase mockAddTaskUsecase;
+  late MockEditTaskUsecase mockEditTaskUsecase;
+  late MockRemoveTaskUsecase mockRemoveTaskUsecase;
+  late MockToggleCompleteUsecase mockToggleCompleteUsecase;
+  late MockToggleAlarmUsecase mockToggleAlarmUsecase;
+
   late ProviderContainer container;
 
-  setUpAll(() {
-    registerFallbackValue(FakeTaskModel());
-    registerFallbackValue(TaskCategory.other);
-    registerFallbackValue(TaskPriority.medium);
-    registerFallbackValue(RecurringType.none);
-  });
-
   setUp(() {
-    mockRepository = MockTasksRepository();
+    provideDummy<Either<Failure, void>>(const Right(null));
+    provideDummy<Either<Failure, List<Task>>>(const Right([]));
+
+    mockGetTasksUsecase = MockGetTasksUsecase();
+    mockAddTaskUsecase = MockAddTaskUsecase();
+    mockEditTaskUsecase = MockEditTaskUsecase();
+    mockRemoveTaskUsecase = MockRemoveTaskUsecase();
+    mockToggleCompleteUsecase = MockToggleCompleteUsecase();
+    mockToggleAlarmUsecase = MockToggleAlarmUsecase();
+
     container = ProviderContainer(
       overrides: [
-        tasksRepositoryProvider.overrideWithValue(mockRepository),
+        getTasksUseCaseProvider.overrideWith((ref) => mockGetTasksUsecase),
+        addTaskUseCaseProvider.overrideWith((ref) => mockAddTaskUsecase),
+        editTaskUseCaseProvider.overrideWith((ref) => mockEditTaskUsecase),
+        removeTaskUseCaseProvider.overrideWith((ref) => mockRemoveTaskUsecase),
+        toggleCompleteUseCaseProvider.overrideWith(
+          (ref) => mockToggleCompleteUsecase,
+        ),
+        toggleAlarmUseCaseProvider.overrideWith(
+          (ref) => mockToggleAlarmUsecase,
+        ),
       ],
     );
   });
@@ -36,80 +71,87 @@ void main() {
     container.dispose();
   });
 
+  final testTask = Task(
+    id: '1',
+    notificationId: 1,
+    title: 'Test Task',
+    description: 'Description',
+    dueDate: DateTime.now(),
+    alarmSet: true,
+    remind5MinEarly: false,
+    priority: TaskPriority.high,
+    category: TaskCategory.work,
+    recurringType: RecurringType.none,
+  );
+
   group('TaskListProvider', () {
-    test('initial state is list of tasks from repository', () async {
-      // Arrange
-      final tasks = [
-        TaskModel(
-          id: '1',
-          notificationId: 1,
-          title: 'Task 1',
-          dueDate: DateTime.now(),
-        ),
-      ];
-      when(() => mockRepository.getTasks()).thenAnswer((_) async => tasks);
+    test('build returns list of tasks from GetTasksUsecase', () async {
+      when(mockGetTasksUsecase(any)).thenAnswer((_) async => Right([testTask]));
 
-      // Act
-      final listener = container.listen(
-        taskListProvider,
-        (previous, next) {},
-        fireImmediately: true,
-      );
-      
-      // Wait for the provider to initialize (it's async)
-       await container.read(taskListProvider.future);
+      final result = await container.read(taskListProvider.future);
 
-      // Assert
-      expect(listener.read().value, tasks);
-      verify(() => mockRepository.getTasks()).called(1);
+      expect(result, [testTask]);
+      verify(mockGetTasksUsecase(any)).called(1);
     });
 
-    test('addTask calls repository', () async {
-      // Arrange
-      when(() => mockRepository.getTasks()).thenAnswer((_) async => []);
-      when(() => mockRepository.addTask(task: any(named: 'task')))
-          .thenAnswer((_) async {});
+    test('build returns empty list on Failure', () async {
+      when(
+        mockGetTasksUsecase(any),
+      ).thenAnswer((_) async => Left(ServerFailure('Error')));
 
-      // Act
-      await container.read(taskListProvider.notifier).addTask(
-            id: '1',
+      final result = await container.read(taskListProvider.future);
+
+      expect(result, []);
+      verify(mockGetTasksUsecase(any)).called(1);
+    });
+
+    test('addTask calls AddTaskUsecase and refreshes', () async {
+      when(
+        mockAddTaskUsecase(any),
+      ) // Ensure matcher is generic enough or matches structure
+      .thenAnswer((_) async => const Right(null));
+
+      // Need to mock getTasks for the refresh
+      when(mockGetTasksUsecase(any)).thenAnswer((_) async => Right([testTask]));
+
+      await container
+          .read(taskListProvider.notifier)
+          .addTask(
             notId: 1,
-            title: 'New Task',
-            desc: '',
+            title: 'Title',
+            desc: 'Desc',
             dueDate: DateTime.now(),
             alarmSet: false,
             remind5MinEarly: false,
-            priority: TaskPriority.medium,
+            priority: TaskPriority.low,
           );
 
-      // Assert
-      verify(() => mockRepository.addTask(task: any(named: 'task'))).called(1);
+      verify(mockAddTaskUsecase(any)).called(1);
     });
-    
-    test('removeTask calls repository', () async {
-        // Arrange
-      when(() => mockRepository.getTasks()).thenAnswer((_) async => []);
-      when(() => mockRepository.removeTask(id: any(named: 'id')))
-          .thenAnswer((_) async {});
 
-      // Act
+    test('removeTask calls RemoveTaskUsecase and refreshes', () async {
+      when(
+        mockRemoveTaskUsecase(any),
+      ).thenAnswer((_) async => const Right(null));
+
+      when(mockGetTasksUsecase(any)).thenAnswer((_) async => Right([]));
+
       await container.read(taskListProvider.notifier).removeTask(id: '1');
 
-      // Assert
-      verify(() => mockRepository.removeTask(id: '1')).called(1);
+      verify(mockRemoveTaskUsecase('1')).called(1);
     });
-    
-     test('toggleComplete calls repository', () async {
-        // Arrange
-      when(() => mockRepository.getTasks()).thenAnswer((_) async => []);
-      when(() => mockRepository.toggleComplete(id: any(named: 'id')))
-          .thenAnswer((_) async {});
 
-      // Act
+    test('toggleComplete calls ToggleCompleteUsecase and refreshes', () async {
+      when(
+        mockToggleCompleteUsecase(any),
+      ).thenAnswer((_) async => const Right(null));
+
+      when(mockGetTasksUsecase(any)).thenAnswer((_) async => Right([]));
+
       await container.read(taskListProvider.notifier).toggleComplete(id: '1');
 
-      // Assert
-      verify(() => mockRepository.toggleComplete(id: '1')).called(1);
+      verify(mockToggleCompleteUsecase('1')).called(1);
     });
   });
 }
+

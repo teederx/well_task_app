@@ -1,14 +1,15 @@
-import 'package:well_task_app/data/models/subtask_model/subtask_model.dart';
-import 'package:well_task_app/data/models/time_log_model/time_log_model.dart';
-import 'package:well_task_app/data/models/attachment_model/attachment_model.dart';
-
-import '../../data/models/task_model/task_model.dart';
-import '../../data/models/task_model/task_enums.dart';
+import 'package:fpdart/fpdart.dart' hide Task;
+import '../../core/errors/failure.dart';
+import '../entities/task.dart';
+import '../entities/task_enums.dart';
+import '../entities/subtask.dart';
+import '../entities/time_log.dart';
+import '../entities/attachment.dart';
 
 abstract class TasksRepository {
-  Future<List<TaskModel>> getTasks();
-  Future<void> addTask({required TaskModel task});
-  Future<void> editTask({
+  Future<Either<Failure, List<Task>>> getTasks();
+  Future<Either<Failure, void>> addTask({required Task task});
+  Future<Either<Failure, void>> editTask({
     required String id,
     required String title,
     required String desc,
@@ -20,18 +21,23 @@ abstract class TasksRepository {
     List<String> tags = const [],
     RecurringType recurringType = RecurringType.none,
     int recurringInterval = 1,
-    List<SubtaskModel> subtasks = const [],
+    List<Subtask> subtasks = const [],
     int totalTimeSpent = 0,
-    List<TimeLogModel> timeLogs = const [],
+    List<TimeLog> timeLogs = const [],
     DateTime? timerStartedAt,
     bool isTimerRunning = false,
-    List<AttachmentModel> attachments = const [],
+    List<Attachment> attachments = const [],
   });
-  Future<void> toggleComplete({required String id});
-  Future<void> toggleAlarm({required String id});
-  Future<void> removeTask({required String id});
-  Future<List<TaskModel>> searchTasks(String query);
-  Future<List<TaskModel>> getTasksByCategory(TaskCategory category);
-  Future<List<TaskModel>> getTasksByTags(List<String> tags);
-  Future<List<TaskModel>> getTasksByDateRange(DateTime start, DateTime end);
+  Future<Either<Failure, void>> toggleComplete({required String id});
+  Future<Either<Failure, void>> toggleAlarm({required String id});
+  Future<Either<Failure, void>> removeTask({required String id});
+  Future<Either<Failure, List<Task>>> searchTasks(String query);
+  Future<Either<Failure, List<Task>>> getTasksByCategory(TaskCategory category);
+  Future<Either<Failure, List<Task>>> getTasksByTags(List<String> tags);
+  Future<Either<Failure, List<Task>>> getTasksByDateRange(
+    DateTime start,
+    DateTime end,
+  );
 }
+
+

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
-import '../../../../../data/models/task_model/task_model.dart';
-import '../../../../../utils/config/alarms_services.dart';
-import '../../../../../utils/config/show_confirm_dialog.dart';
+import '../../../../../domain/entities/task.dart';
+import 'package:well_task_app/core/utils/config/alarms_services.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../../task_page/task_page.dart';
 import '../main_screen.dart';
@@ -18,7 +18,7 @@ import 'upcoming_task_tile.dart';
 
 class UpcomingTasks extends ConsumerWidget {
   const UpcomingTasks({super.key, required this.tasksList});
-  final List<TaskModel> tasksList;
+  final List<Task> tasksList;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,3 +91,5 @@ class UpcomingTasks extends ConsumerWidget {
     );
   }
 }
+
+

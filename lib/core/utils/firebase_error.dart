@@ -21,3 +21,4 @@ class FirebaseErrorPage extends StatelessWidget {
     );
   }
 }
+

@@ -31,3 +31,5 @@ const _$AttachmentTypeEnumMap = {
   AttachmentType.document: 'document',
   AttachmentType.other: 'other',
 };
+
+

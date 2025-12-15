@@ -54,3 +54,5 @@ class HapticService {
     await HapticFeedback.mediumImpact();
   }
 }
+
+

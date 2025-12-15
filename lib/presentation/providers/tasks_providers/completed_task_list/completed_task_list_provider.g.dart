@@ -6,12 +6,12 @@ part of 'completed_task_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$completedTaskListHash() => r'c00eee9d340fbcc34bcefcfc3b50d2b54ce9a106';
+String _$completedTaskListHash() => r'a03a67437f7a5cbbe2e8dea40acc5b054b203f91';
 
 /// See also [completedTaskList].
 @ProviderFor(completedTaskList)
 final completedTaskListProvider =
-    AutoDisposeFutureProvider<List<TaskModel>>.internal(
+    AutoDisposeFutureProvider<List<Task>>.internal(
       completedTaskList,
       name: r'completedTaskListProvider',
       debugGetCreateSourceHash:
@@ -24,6 +24,8 @@ final completedTaskListProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CompletedTaskListRef = AutoDisposeFutureProviderRef<List<TaskModel>>;
+typedef CompletedTaskListRef = AutoDisposeFutureProviderRef<List<Task>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+
+

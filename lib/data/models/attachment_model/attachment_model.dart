@@ -1,9 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:well_task_app/domain/entities/attachment.dart';
 
 part 'attachment_model.freezed.dart';
 part 'attachment_model.g.dart';
-
-enum AttachmentType { image, document, other }
 
 @freezed
 abstract class AttachmentModel with _$AttachmentModel {
@@ -19,3 +18,5 @@ abstract class AttachmentModel with _$AttachmentModel {
   factory AttachmentModel.fromJson(Map<String, dynamic> json) =>
       _$AttachmentModelFromJson(json);
 }
+
+

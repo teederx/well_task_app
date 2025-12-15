@@ -1,13 +1,18 @@
-import 'package:well_task_app/data/models/task_model/task_model.dart';
-
+import 'package:fpdart/fpdart.dart' hide Task;
+import 'package:well_task_app/core/errors/failure.dart';
+import 'package:well_task_app/core/usecase/usecase.dart';
+import '../../entities/task.dart';
 import '../../repositories/tasks_repository.dart';
 
-class AddTaskUsecase {
+class AddTaskUsecase implements UseCase<void, Task> {
   final TasksRepository _taskRepository;
 
   AddTaskUsecase(this._taskRepository);
 
-  Future<void> call(TaskModel task) async {
-    return await _taskRepository.addTask(task: task);
+  @override
+  Future<Either<Failure, void>> call(Task params) async {
+    return await _taskRepository.addTask(task: params);
   }
 }
+
+

@@ -9,3 +9,4 @@ class ChangePasswordUsecase {
     return _authRepository.changePassword(password: password);
   }
 }
+
