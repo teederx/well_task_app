@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 /// Custom page route with smooth fade + slide animation
 class FadeSlidePageRoute<T> extends PageRoute<T> {
@@ -199,3 +199,5 @@ class SlideUpPageRoute<T> extends PageRoute<T> {
     );
   }
 }
+
+

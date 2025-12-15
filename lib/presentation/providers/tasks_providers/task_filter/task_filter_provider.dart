@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart'; // For DateRange
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../data/models/task_model/task_enums.dart';
-import '../../../../data/models/task_model/task_model.dart';
+import '../../../../domain/entities/task.dart';
+import '../../../../domain/entities/task_enums.dart';
+
 import '../task_list/task_list_provider.dart';
 
 part 'task_filter_provider.g.dart';
@@ -87,9 +89,10 @@ class TaskFilterState {
           setCategoryNull ? null : (selectedCategory ?? this.selectedCategory),
       selectedPriority:
           setPriorityNull ? null : (selectedPriority ?? this.selectedPriority),
-      selectedDateRange: setDateRangeNull
-          ? null
-          : (selectedDateRange ?? this.selectedDateRange),
+      selectedDateRange:
+          setDateRangeNull
+              ? null
+              : (selectedDateRange ?? this.selectedDateRange),
       searchQuery: searchQuery ?? this.searchQuery,
       selectedTags: selectedTags ?? this.selectedTags,
     );
@@ -97,7 +100,7 @@ class TaskFilterState {
 }
 
 @riverpod
-Future<List<TaskModel>> filteredTaskList(FilteredTaskListRef ref) async {
+Future<List<Task>> filteredTaskList(Ref ref) async {
   final taskListAsync = ref.watch(taskListProvider);
   final filterState = ref.watch(taskFilterProvider);
 
@@ -155,3 +158,5 @@ Future<List<TaskModel>> filteredTaskList(FilteredTaskListRef ref) async {
     error: (_, __) => [],
   );
 }
+
+

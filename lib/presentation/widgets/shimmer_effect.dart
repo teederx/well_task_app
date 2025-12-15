@@ -129,3 +129,5 @@ class _SlideGradientTransform extends GradientTransform {
 }
 
 enum ShimmerDirection { leftToRight, rightToLeft, topToBottom, bottomToTop }
+
+

@@ -6,7 +6,7 @@ import 'package:well_task_app/presentation/screens/auth/change_password_page.dar
 import 'package:well_task_app/presentation/screens/content/insights_page/insights_page.dart';
 
 import '../../../../../../data/models/custom_error_model.dart';
-import '../../../../../../utils/config/show_confirm_dialog.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import '../../../../../providers/auth/sign_out/sign_out_provider.dart';
 import '../../../../../providers/user/user_provider.dart';
 import '../../widget/show_custom_dialog.dart';
@@ -154,3 +154,5 @@ class Profile extends ConsumerWidget {
     );
   }
 }
+
+

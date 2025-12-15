@@ -2,26 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:well_task_app/domain/entities/task.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
 
-import '../../../../data/models/task_model/task_model.dart' hide uuid;
-import '../../../../data/models/task_model/task_enums.dart';
-import '../../../../data/models/subtask_model/subtask_model.dart';
+import 'package:uuid/uuid.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:well_task_app/data/services/attachment_service.dart';
-import '../../../../data/models/attachment_model/attachment_model.dart';
+import 'package:well_task_app/domain/entities/attachment.dart';
 import 'widgets/attachment_list_widget.dart';
-import '../../../../utils/config/alarms_services.dart';
-import '../../../../utils/config/formatted_date_time.dart';
-import '../../../../utils/constants/app_theme.dart';
-import '../../../../utils/constants/priority_constants.dart';
+import 'package:well_task_app/core/utils/config/alarms_services.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/priority_constants.dart';
 import '../../../providers/tasks_providers/get_a_task/task_provider.dart';
 import '../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../main_screen/main_screen.dart';
 import 'widget/add_task_field.dart';
 import 'widget/select_date.dart';
 import 'widgets/subtask_list.dart';
-import '../../../../data/models/time_log_model/time_log_model.dart';
+import 'package:well_task_app/domain/entities/subtask.dart';
+import 'package:well_task_app/domain/entities/time_log.dart';
 import 'widgets/time_tracker_widget.dart';
 
 final notificationService = AlarmServicesImpl();
@@ -55,12 +56,12 @@ class _TaskPageState extends ConsumerState<TaskPage> {
   RecurringType _recurringType = RecurringType.none;
   int _recurringInterval = 1;
   late TextEditingController _recurringIntervalController;
-  List<SubtaskModel> _subtasks = [];
+  List<Subtask> _subtasks = [];
   int _totalTimeSpent = 0;
-  List<TimeLogModel> _timeLogs = [];
+  List<TimeLog> _timeLogs = [];
   DateTime? _timerStartedAt;
   bool _isTimerRunning = false;
-  List<AttachmentModel> _attachments = [];
+  List<Attachment> _attachments = [];
   final AttachmentService _attachmentService = AttachmentService();
 
   @override
@@ -125,7 +126,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     }
   }
 
-  void _deleteAttachment(AttachmentModel attachment) {
+  void _deleteAttachment(Attachment attachment) {
     setState(() {
       _attachments.remove(attachment);
     });
@@ -278,7 +279,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     }
   }
 
-  TaskModel fetchTask() {
+  Task fetchTask() {
     return ref.watch(taskProvider(id: widget.id!));
   }
 
@@ -306,7 +307,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
       _isTimerRunning = task.isTimerRunning;
       _attachments = List.from(task.attachments);
     } else {
-      id = uuid.v4();
+      id = const Uuid().v4();
       notId = DateTime.now().millisecondsSinceEpoch ~/ 1000;
       dateTime = DateTime.now();
       _selectedPriority = TaskPriority.medium;
@@ -730,6 +731,190 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     );
   }
 
+  Widget _buildCategorySelector(bool isViewOnly) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.category, color: AppTheme.purple, size: 20.sp),
+            8.horizontalSpace,
+            Text(
+              'Category',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.purple,
+              ),
+            ),
+          ],
+        ),
+        12.verticalSpace,
+        if (isViewOnly)
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.sp),
+                decoration: BoxDecoration(
+                  color: _selectedCategory.color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _selectedCategory.icon,
+                  color: _selectedCategory.color,
+                  size: 20.sp,
+                ),
+              ),
+              10.horizontalSpace,
+              Text(
+                _selectedCategory.label,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          )
+        else
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children:
+                  TaskCategory.values.map((category) {
+                    final isSelected = _selectedCategory == category;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() => _selectedCategory = category);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 12.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 10.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? category.color.withValues(alpha: 0.1)
+                                  : Colors.white,
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color:
+                                isSelected
+                                    ? category.color
+                                    : Colors.grey.shade300,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              category.icon,
+                              color:
+                                  isSelected
+                                      ? category.color
+                                      : Colors.grey[600],
+                              size: 18.sp,
+                            ),
+                            8.horizontalSpace,
+                            Text(
+                              category.label,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    isSelected
+                                        ? category.color
+                                        : Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTagsInput(bool isViewOnly) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.tag, color: AppTheme.purple, size: 20.sp),
+            8.horizontalSpace,
+            Text(
+              'Tags',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.purple,
+              ),
+            ),
+          ],
+        ),
+        12.verticalSpace,
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children:
+              _tags.map((tag) {
+                return Chip(
+                  label: Text(tag),
+                  backgroundColor: AppTheme.purple.withValues(alpha: 0.1),
+                  labelStyle: TextStyle(
+                    color: AppTheme.purple,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  onDeleted: isViewOnly ? null : () => _removeTag(tag),
+                  deleteIconColor: AppTheme.purple,
+                  side: BorderSide.none,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                );
+              }).toList(),
+        ),
+        if (!isViewOnly) ...[
+          12.verticalSpace,
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _tagController,
+                  decoration: InputDecoration(
+                    hintText: 'Add a tag...',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                  ),
+                  onSubmitted: (value) => _addTag(value),
+                ),
+              ),
+              8.horizontalSpace,
+              IconButton(
+                onPressed: () => _addTag(_tagController.text),
+                icon: Icon(Icons.add_circle, color: AppTheme.purple),
+                iconSize: 32.sp,
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
   Widget _buildRecurringSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -800,18 +985,28 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                  ),
                   controller: _recurringIntervalController,
-                  onChanged: (val) {
-                    setState(() {
-                      _recurringInterval = int.tryParse(val) ?? 1;
-                    });
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(border: InputBorder.none),
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    final interval = int.tryParse(value);
+                    if (interval != null && interval > 0) {
+                      setState(() => _recurringInterval = interval);
+                    }
                   },
                 ),
+              ),
+              10.horizontalSpace,
+              Text(
+                '(${_recurringType == RecurringType.daily
+                    ? "days"
+                    : _recurringType == RecurringType.weekly
+                    ? "weeks"
+                    : _recurringType == RecurringType.monthly
+                    ? "months"
+                    : "years"})',
+                style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
               ),
             ],
           ),
@@ -819,178 +1014,6 @@ class _TaskPageState extends ConsumerState<TaskPage> {
       ],
     );
   }
-
-  Widget _buildCategorySelector(bool isViewOnly) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(Icons.category_outlined, color: AppTheme.purple, size: 20.sp),
-            8.horizontalSpace,
-            Text(
-              'Category',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.purple,
-              ),
-            ),
-          ],
-        ),
-        12.verticalSpace,
-        if (isViewOnly)
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: _selectedCategory.color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8.r),
-              border: Border.all(color: _selectedCategory.color),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  _selectedCategory.icon,
-                  size: 18.sp,
-                  color: _selectedCategory.color,
-                ),
-                8.horizontalSpace,
-                Text(
-                  _selectedCategory.label,
-                  style: TextStyle(
-                    color: _selectedCategory.color,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children:
-                  TaskCategory.values.map((category) {
-                    final isSelected = _selectedCategory == category;
-                    return Padding(
-                      padding: EdgeInsets.only(right: 8.w),
-                      child: ChoiceChip(
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              category.icon,
-                              size: 16.sp,
-                              color: isSelected ? Colors.white : category.color,
-                            ),
-                            6.horizontalSpace,
-                            Text(category.label),
-                          ],
-                        ),
-                        selected: isSelected,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            _selectedCategory = category;
-                          });
-                        },
-                        selectedColor: category.color,
-                        backgroundColor: Colors.white,
-                        labelStyle: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black87,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                        side: BorderSide(
-                          color:
-                              isSelected
-                                  ? Colors.transparent
-                                  : Colors.grey.shade300,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTagsInput(bool isViewOnly) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.label_outline_rounded,
-              color: AppTheme.purple,
-              size: 20.sp,
-            ),
-            8.horizontalSpace,
-            Text(
-              'Tags',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.purple,
-              ),
-            ),
-          ],
-        ),
-        12.verticalSpace,
-        if (!isViewOnly) ...[
-          Container(
-            width: double.infinity,
-            // padding: EdgeInsets.symmetric(horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: AppTheme.purple.withValues(alpha: 0.5)),
-            ),
-            child: TextField(
-              controller: _tagController,
-              decoration: InputDecoration(
-                hintText: 'Add a tag...',
-                border: InputBorder.none,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.add_circle, color: AppTheme.purple),
-                  onPressed: () => _addTag(_tagController.text.trim()),
-                ),
-              ),
-              onSubmitted: (value) => _addTag(value.trim()),
-            ),
-          ),
-          10.verticalSpace,
-        ],
-        if (_tags.isNotEmpty)
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children:
-                _tags.map((tag) {
-                  return InputChip(
-                    label: Text(tag),
-                    deleteIcon:
-                        isViewOnly ? null : Icon(Icons.close, size: 16.sp),
-                    onDeleted: isViewOnly ? null : () => _removeTag(tag),
-                    backgroundColor: AppTheme.purple.withValues(alpha: 0.1),
-                    labelStyle: TextStyle(color: AppTheme.purple),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.r),
-                      side: BorderSide(
-                        color: AppTheme.purple.withValues(alpha: 0.3),
-                      ),
-                    ),
-                  );
-                }).toList(),
-          )
-        else if (isViewOnly)
-          Text(
-            'No tags',
-            style: TextStyle(color: Colors.grey, fontStyle: FontStyle.italic),
-          ),
-      ],
-    );
-  }
 }
+
+

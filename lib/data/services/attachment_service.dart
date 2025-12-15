@@ -5,13 +5,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:well_task_app/data/models/attachment_model/attachment_model.dart';
+import '../../domain/entities/attachment.dart';
 
 class AttachmentService {
   final ImagePicker _picker = ImagePicker();
   final Uuid _uuid = const Uuid();
 
-  Future<AttachmentModel?> pickImage(ImageSource source) async {
+  Future<Attachment?> pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(source: source);
       if (image == null) return null;
@@ -23,7 +23,7 @@ class AttachmentService {
     }
   }
 
-  Future<AttachmentModel?> pickFile() async {
+  Future<Attachment?> pickFile() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles();
       if (result == null || result.files.single.path == null) return null;
@@ -35,15 +35,12 @@ class AttachmentService {
     }
   }
 
-  Future<AttachmentModel> _saveFileToAppDir(
-    File file,
-    AttachmentType type,
-  ) async {
+  Future<Attachment> _saveFileToAppDir(File file, AttachmentType type) async {
     final appDir = await getApplicationDocumentsDirectory();
     final fileName = p.basename(file.path);
     final savedFile = await file.copy('${appDir.path}/$fileName');
 
-    return AttachmentModel(
+    return Attachment(
       id: _uuid.v4(),
       fileName: fileName,
       filePath: savedFile.path,
@@ -53,10 +50,12 @@ class AttachmentService {
     );
   }
 
-  Future<void> deleteAttachment(AttachmentModel attachment) async {
+  Future<void> deleteAttachment(Attachment attachment) async {
     final file = File(attachment.filePath);
     if (await file.exists()) {
       await file.delete();
     }
   }
 }
+
+

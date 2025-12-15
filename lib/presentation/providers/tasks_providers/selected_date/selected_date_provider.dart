@@ -13,3 +13,4 @@ class SelectedDate extends _$SelectedDate {
     state = date;
   }
 }
+

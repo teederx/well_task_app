@@ -2,7 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:well_task_app/data/models/app_user/app_user_model.dart';
 import 'package:well_task_app/domain/repositories/user_repository.dart';
 
-import '../../../utils/constants/firebase_constants.dart';
+import 'package:well_task_app/core/utils/constants/firebase_constants.dart';
 
 class UserRepositoryImpl implements UserRepository {
   Future<Box> get _userBox async {
@@ -28,3 +28,5 @@ class UserRepositoryImpl implements UserRepository {
     }
   }
 }
+
+

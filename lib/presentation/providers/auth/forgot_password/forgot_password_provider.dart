@@ -35,3 +35,4 @@ class ForgotPassword extends _$ForgotPassword {
     }
   }
 }
+

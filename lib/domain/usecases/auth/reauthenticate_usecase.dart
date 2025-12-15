@@ -9,3 +9,4 @@ class ReauthenticateUsecase {
     return _authRepository.reauthenticateWithCredential(password: password, email: email);
   }
 }
+

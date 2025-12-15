@@ -1,13 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../data/models/subtask_model/subtask_model.dart';
-import '../../../../data/models/task_model/task_enums.dart';
-import '../../../../data/models/task_model/task_model.dart';
-import '../../../../data/repositories/tasks_repository/provider/tasks_repository_provider.dart';
+import '../../../../core/usecase/usecase.dart';
+import '../../../../domain/entities/task.dart';
+import '../../../../domain/entities/task_enums.dart';
+import '../../../../domain/entities/subtask.dart';
+import '../../../../domain/entities/time_log.dart';
+import '../../../../domain/entities/attachment.dart';
+import '../../../../domain/usecases/tasks/edit_task_usecase.dart';
 
-import '../../../../data/models/time_log_model/time_log_model.dart';
-import '../../../../data/models/attachment_model/attachment_model.dart';
+import '../use_cases/tasks_use_case_provider.dart';
 
 part 'task_list_provider.g.dart';
 
@@ -16,20 +19,16 @@ const uuid = Uuid();
 @riverpod
 class TaskList extends _$TaskList {
   @override
-  Future<List<TaskModel>> build() async {
-    final repository = ref.read(tasksRepositoryProvider);
-    try {
-      return await repository.getTasks();
-    } catch (e, _) {
-      // Avoid crashing the UI if auth is missing or storage fails.
-      // debugPrint('TaskList build error: $e');
-      // debugPrint('$st');
+  Future<List<Task>> build() async {
+    final getTasks = ref.read(getTasksUseCaseProvider);
+    final result = await getTasks(NoParams());
+    return result.fold((failure) {
+      debugPrint('TaskList build error: ${failure.message}');
       return [];
-    }
+    }, (tasks) => tasks);
   }
 
   Future<void> addTask({
-    required String id,
     required int notId,
     required String title,
     required String desc,
@@ -37,20 +36,21 @@ class TaskList extends _$TaskList {
     required bool alarmSet,
     required bool remind5MinEarly,
     required TaskPriority priority,
+    String? id,
     TaskCategory category = TaskCategory.other,
     List<String> tags = const [],
     RecurringType recurringType = RecurringType.none,
     int recurringInterval = 1,
-    List<SubtaskModel> subtasks = const [],
+    List<Subtask> subtasks = const [],
     int totalTimeSpent = 0,
-    List<TimeLogModel> timeLogs = const [],
+    List<TimeLog> timeLogs = const [],
     DateTime? timerStartedAt,
     bool isTimerRunning = false,
-    List<AttachmentModel> attachments = const [],
+    List<Attachment> attachments = const [],
   }) async {
-    final repository = ref.read(tasksRepositoryProvider);
-    final task = TaskModel.createTask(
-      id: id,
+    final addTask = ref.read(addTaskUseCaseProvider);
+    final task = Task(
+      id: id ?? const Uuid().v4(),
       notificationId: notId,
       title: title,
       description: desc,
@@ -69,8 +69,12 @@ class TaskList extends _$TaskList {
       isTimerRunning: isTimerRunning,
       attachments: attachments,
     );
-    await repository.addTask(task: task);
-    ref.invalidateSelf();
+
+    final result = await addTask(task);
+    result.fold(
+      (failure) => debugPrint('Add task failed: ${failure.message}'),
+      (_) => ref.invalidateSelf(),
+    );
   }
 
   Future<void> editTask({
@@ -85,15 +89,15 @@ class TaskList extends _$TaskList {
     List<String> tags = const [],
     RecurringType recurringType = RecurringType.none,
     int recurringInterval = 1,
-    List<SubtaskModel> subtasks = const [],
+    List<Subtask> subtasks = const [],
     int totalTimeSpent = 0,
-    List<TimeLogModel> timeLogs = const [],
+    List<TimeLog> timeLogs = const [],
     DateTime? timerStartedAt,
     bool isTimerRunning = false,
-    List<AttachmentModel> attachments = const [],
+    List<Attachment> attachments = const [],
   }) async {
-    final repository = ref.read(tasksRepositoryProvider);
-    await repository.editTask(
+    final editTask = ref.read(editTaskUseCaseProvider);
+    final params = EditTaskParams(
       id: id,
       title: title,
       desc: desc,
@@ -105,10 +109,6 @@ class TaskList extends _$TaskList {
       tags: tags,
       recurringType: recurringType,
       recurringInterval: recurringInterval,
-      // Note: repository.editTask likely needs update too if it copies fields manually
-      // but if it replaces the task or uses helper, we need to pass these params
-      // Assuming repository.editTask takes named args matching TaskModel fields or a TaskModel object.
-      // Checking local cache of TasksRepository... wait, I need to check TasksRepository.
       subtasks: subtasks,
       totalTimeSpent: totalTimeSpent,
       timeLogs: timeLogs,
@@ -116,24 +116,40 @@ class TaskList extends _$TaskList {
       isTimerRunning: isTimerRunning,
       attachments: attachments,
     );
-    ref.invalidateSelf();
+
+    final result = await editTask(params);
+    result.fold(
+      (failure) => debugPrint('Edit task failed: ${failure.message}'),
+      (_) => ref.invalidateSelf(),
+    );
   }
 
   Future<void> removeTask({required String id}) async {
-    final repository = ref.read(tasksRepositoryProvider);
-    await repository.removeTask(id: id);
-    ref.invalidateSelf();
+    final removeTask = ref.read(removeTaskUseCaseProvider);
+    final result = await removeTask(id);
+    result.fold(
+      (failure) => debugPrint('Remove task failed: ${failure.message}'),
+      (_) => ref.invalidateSelf(),
+    );
   }
 
   Future<void> toggleComplete({required String id}) async {
-    final repository = ref.read(tasksRepositoryProvider);
-    await repository.toggleComplete(id: id);
-    ref.invalidateSelf();
+    final toggleComplete = ref.read(toggleCompleteUseCaseProvider);
+    final result = await toggleComplete(id);
+    result.fold(
+      (failure) => debugPrint('Toggle complete failed: ${failure.message}'),
+      (_) => ref.invalidateSelf(),
+    );
   }
 
   Future<void> toggleAlarm({required String id}) async {
-    final repository = ref.read(tasksRepositoryProvider);
-    await repository.toggleAlarm(id: id);
-    ref.invalidateSelf();
+    final toggleAlarm = ref.read(toggleAlarmUseCaseProvider);
+    final result = await toggleAlarm(id);
+    result.fold(
+      (failure) => debugPrint('Toggle alarm failed: ${failure.message}'),
+      (_) => ref.invalidateSelf(),
+    );
   }
 }
+
+

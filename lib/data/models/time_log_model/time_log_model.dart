@@ -16,3 +16,5 @@ abstract class TimeLogModel with _$TimeLogModel {
   factory TimeLogModel.fromJson(Map<String, dynamic> json) =>
       _$TimeLogModelFromJson(json);
 }
+
+

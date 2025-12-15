@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class AnimatedDateContainer extends StatelessWidget {
   final DateTime date;
@@ -80,3 +80,5 @@ class AnimatedDateContainer extends StatelessWidget {
     );
   }
 }
+
+

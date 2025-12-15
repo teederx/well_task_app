@@ -4,8 +4,8 @@ import 'package:well_task_app/presentation/screens/content/calendar_page/calenda
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/completed_tasks.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/profile/profile.dart';
 import 'package:well_task_app/presentation/screens/content/main_screen/pages/tasks.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
-import 'package:well_task_app/utils/config/haptic_service.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/haptic_service.dart';
 
 import 'pages/home.dart';
 import 'widget/fab.dart';
@@ -141,3 +141,5 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 enum PageType { addTask, editTask, viewTask }
+
+

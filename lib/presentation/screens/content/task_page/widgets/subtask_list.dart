@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
-import 'package:well_task_app/data/models/subtask_model/subtask_model.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import '../../../../../domain/entities/subtask.dart';
 
 class SubtaskList extends ConsumerStatefulWidget {
-  final List<SubtaskModel> subtasks;
-  final Function(List<SubtaskModel>) onSubtasksChanged;
+  final List<Subtask> subtasks;
+  final Function(List<Subtask>) onSubtasksChanged;
 
   const SubtaskList({
     super.key,
@@ -32,7 +32,7 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
   void _addSubtask() {
     if (_subtaskController.text.trim().isEmpty) return;
 
-    final newSubtask = SubtaskModel(
+    final newSubtask = Subtask(
       id: _uuid.v4(),
       title: _subtaskController.text.trim(),
       createdAt: DateTime.now(),
@@ -50,13 +50,13 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
       completedAt: !subtask.isCompleted ? DateTime.now() : null,
     );
 
-    final updatedSubtasks = List<SubtaskModel>.from(widget.subtasks);
+    final updatedSubtasks = List<Subtask>.from(widget.subtasks);
     updatedSubtasks[index] = updatedSubtask;
     widget.onSubtasksChanged(updatedSubtasks);
   }
 
   void _deleteSubtask(int index) {
-    final updatedSubtasks = List<SubtaskModel>.from(widget.subtasks);
+    final updatedSubtasks = List<Subtask>.from(widget.subtasks);
     updatedSubtasks.removeAt(index);
     widget.onSubtasksChanged(updatedSubtasks);
   }
@@ -157,7 +157,7 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
 }
 
 class _SubtaskTile extends StatelessWidget {
-  final SubtaskModel subtask;
+  final Subtask subtask;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
 
@@ -219,3 +219,5 @@ class _SubtaskTile extends StatelessWidget {
     );
   }
 }
+
+

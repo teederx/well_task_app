@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
-import 'package:well_task_app/data/models/time_log_model/time_log_model.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/domain/entities/task.dart';
+import 'package:well_task_app/domain/entities/time_log.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class TimeTrackerWidget extends ConsumerStatefulWidget {
-  final TaskModel task;
+  final Task task;
   final Function(
     bool isRunning,
     DateTime? startTime,
     int totalDuration,
-    List<TimeLogModel> logs,
+    List<TimeLog> logs,
   )
   onTimerChanged;
 
@@ -81,7 +81,7 @@ class _TimeTrackerWidgetState extends ConsumerState<TimeTrackerWidget> {
         final startTime =
             widget.task.timerStartedAt ??
             DateTime.now().subtract(Duration(seconds: _currentSessionDuration));
-        final newLog = TimeLogModel(
+        final newLog = TimeLog(
           id: _uuid.v4(),
           startTime: startTime,
           endTime: endTime,
@@ -233,3 +233,5 @@ class _TimeTrackerWidgetState extends ConsumerState<TimeTrackerWidget> {
     );
   }
 }
+
+

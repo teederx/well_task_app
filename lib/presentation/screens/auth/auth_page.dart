@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 import '../../../data/models/custom_error_model.dart';
-import '../../../utils/config/show_confirm_dialog.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import '../../providers/auth/sign up/sign_up_provider.dart';
 import '../../providers/auth/sign_in/sign_in_provider.dart';
 import 'reset_password_page.dart';
@@ -237,3 +237,5 @@ class _AuthPageState extends ConsumerState<AuthPage> {
     );
   }
 }
+
+

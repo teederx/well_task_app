@@ -1,19 +1,18 @@
-import 'package:well_task_app/domain/repositories/tasks_repository.dart';
+import 'package:fpdart/fpdart.dart' hide Task;
+import 'package:well_task_app/core/errors/failure.dart';
+import 'package:well_task_app/core/usecase/usecase.dart';
+import '../../entities/task.dart';
+import '../../repositories/tasks_repository.dart';
 
-import '../../../data/models/task_model/task_model.dart';
-
-class GetTasksUsecase {
+class GetTasksUsecase implements UseCase<List<Task>, NoParams> {
   final TasksRepository _tasksRepository;
 
   GetTasksUsecase(this._tasksRepository);
 
-  Future<List<TaskModel>> call() async {
-    try {
-      return await _tasksRepository.getTasks();
-    } catch (e) {
-      // You can also throw a domain-specific error here
-      rethrow;
-    }
+  @override
+  Future<Either<Failure, List<Task>>> call(NoParams params) async {
+    return await _tasksRepository.getTasks();
   }
 }
+
 

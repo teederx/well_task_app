@@ -6,12 +6,12 @@ part of 'task_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$taskListHash() => r'8c11ba4c857487505726d25f8b65a54ea5e2b6a9';
+String _$taskListHash() => r'19193d2a6a8c1d19d153e8658d4a77220f95bc45';
 
 /// See also [TaskList].
 @ProviderFor(TaskList)
 final taskListProvider =
-    AutoDisposeAsyncNotifierProvider<TaskList, List<TaskModel>>.internal(
+    AutoDisposeAsyncNotifierProvider<TaskList, List<Task>>.internal(
       TaskList.new,
       name: r'taskListProvider',
       debugGetCreateSourceHash:
@@ -20,6 +20,6 @@ final taskListProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$TaskList = AutoDisposeAsyncNotifier<List<TaskModel>>;
+typedef _$TaskList = AutoDisposeAsyncNotifier<List<Task>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

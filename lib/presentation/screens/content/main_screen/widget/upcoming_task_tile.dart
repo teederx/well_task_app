@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/data/models/task_model/task_model.dart';
-import 'package:well_task_app/utils/config/formatted_date_time.dart';
 
-import '../../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/domain/entities/task_enums.dart';
+
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 
 class UpcomingTaskTile extends StatelessWidget {
   const UpcomingTaskTile({
@@ -130,3 +131,5 @@ class UpcomingTaskTile extends StatelessWidget {
     );
   }
 }
+
+

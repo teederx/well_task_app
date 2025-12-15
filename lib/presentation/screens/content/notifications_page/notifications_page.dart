@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../utils/config/formatted_date_time.dart';
-import '../../../../utils/constants/app_theme.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import '../../../providers/tasks_providers/notifications/notifications_provider.dart';
 import '../main_screen/widget/tile_animation.dart';
 
@@ -66,3 +66,5 @@ class NotificationsPage extends ConsumerWidget {
     );
   }
 }
+
+

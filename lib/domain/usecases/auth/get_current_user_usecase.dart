@@ -11,3 +11,4 @@ class GetCurrentUserUsecase {
     return _authRepository.currentUser!;
   }
 }
+

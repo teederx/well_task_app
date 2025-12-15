@@ -9,3 +9,4 @@ class SendPasswordResetUsecase {
     return _authRepository.sendPasswordResetEmail(email: email);
   }
 }
+

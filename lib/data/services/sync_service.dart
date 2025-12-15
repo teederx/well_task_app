@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:well_task_app/presentation/providers/connectivity_provider.dart';
 import 'package:well_task_app/presentation/providers/tasks_providers/task_list/task_list_provider.dart';
+
+import '../../presentation/providers/connectivity/connectivity_provider.dart';
 
 class SyncService {
   final Ref ref;
@@ -30,3 +31,5 @@ class SyncService {
 final syncServiceProvider = Provider<SyncService>((ref) {
   return SyncService(ref);
 });
+
+

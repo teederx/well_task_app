@@ -2,8 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/utils/constants/app_theme.dart';
-import '../../../../data/models/task_model/task_enums.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
+import '../../../../domain/entities/task_enums.dart';
 import '../../../providers/tasks_providers/task_list/task_list_provider.dart';
 
 class StatsPage extends ConsumerWidget {
@@ -335,3 +335,5 @@ class _Legend extends StatelessWidget {
     );
   }
 }
+
+

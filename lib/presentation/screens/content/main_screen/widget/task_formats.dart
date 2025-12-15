@@ -1,6 +1,6 @@
-import '../../../../../data/models/task_model/task_model.dart';
+import '../../../../../domain/entities/task.dart';
 
-List<TaskModel> tasksForDate(DateTime date, List<TaskModel> allTasks) {
+List<Task> tasksForDate(DateTime date, List<Task> allTasks) {
   final targetDate = DateTime(date.year, date.month, date.day);
 
   return allTasks.where((task) {
@@ -13,12 +13,12 @@ List<TaskModel> tasksForDate(DateTime date, List<TaskModel> allTasks) {
   }).toList();
 }
 
-List<TaskModel> tasksForToday(List<TaskModel> allTasks) {
+List<Task> tasksForToday(List<Task> allTasks) {
   final today = DateTime.now();
   return tasksForDate(today, allTasks);
 }
 
-List<TaskModel> tasksAfterToday(List<TaskModel> allTasks) {
+List<Task> tasksAfterToday(List<Task> allTasks) {
   final today = DateTime.now();
   final todayAtMidnight = DateTime(today.year, today.month, today.day);
 
@@ -32,6 +32,8 @@ List<TaskModel> tasksAfterToday(List<TaskModel> allTasks) {
   }).toList();
 }
 
-List<TaskModel> getUpcomingTasks(List<TaskModel> allTasks) {
+List<Task> getUpcomingTasks(List<Task> allTasks) {
   return tasksAfterToday(allTasks);
 }
+
+

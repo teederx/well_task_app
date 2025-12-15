@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/presentation/screens/content/task_page/task_page.dart';
 
-import '../../../../../data/models/task_model/task_model.dart';
-import '../../../../../utils/config/alarms_services.dart';
-import '../../../../../utils/config/formatted_date_time.dart';
-import '../../../../../utils/config/show_confirm_dialog.dart';
-import '../../../../../utils/constants/app_theme.dart';
+import '../../../../../domain/entities/task.dart';
+import 'package:well_task_app/core/utils/config/alarms_services.dart';
+import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
+import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
+import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import '../../../../providers/tasks_providers/selected_date/selected_date_provider.dart';
 import '../../../../providers/tasks_providers/task_list/task_list_provider.dart';
 import '../main_screen.dart';
@@ -27,7 +27,7 @@ class AllTasks extends ConsumerWidget {
     this.isCompletedScreen = false,
   });
 
-  final List<TaskModel> tasksList;
+  final List<Task> tasksList;
   final bool isCompletedScreen;
 
   @override
@@ -124,3 +124,5 @@ class AllTasks extends ConsumerWidget {
     );
   }
 }
+
+

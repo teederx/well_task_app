@@ -10,3 +10,4 @@ part 'user_repository_provider.g.dart';
 UserRepository userRepository(Ref ref) {
   return UserRepositoryImpl();
 }
+

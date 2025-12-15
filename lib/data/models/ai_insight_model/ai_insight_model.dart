@@ -15,3 +15,5 @@ abstract class AIInsightModel with _$AIInsightModel {
   factory AIInsightModel.fromJson(Map<String, dynamic> json) =>
       _$AIInsightModelFromJson(json);
 }
+
+

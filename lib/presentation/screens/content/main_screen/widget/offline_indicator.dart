@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:well_task_app/presentation/providers/connectivity_provider.dart';
+
+import '../../../../providers/connectivity/connectivity_provider.dart';
 
 class OfflineIndicator extends ConsumerWidget {
   const OfflineIndicator({super.key});
@@ -37,3 +38,5 @@ class OfflineIndicator extends ConsumerWidget {
     );
   }
 }
+
+

@@ -1,37 +1,53 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../data/models/task_model/task_model.dart';
+import '../../../../domain/entities/task.dart';
+import '../../../../domain/entities/task_enums.dart';
 import '../task_list/task_list_provider.dart';
 
 part 'task_provider.g.dart';
 
 @riverpod
-TaskModel task(Ref ref, {required String id}) {
+Task task(Ref ref, {required String id}) {
   final taskListAsync = ref.watch(taskListProvider);
 
   return taskListAsync.maybeWhen(
     data: (taskList) {
       if (taskList.isEmpty) {
-        return TaskModel(
+        return Task(
           id: id,
           notificationId: 0,
           title: '',
           dueDate: DateTime.now(),
+          priority: TaskPriority.medium,
+          category: TaskCategory.other,
         );
       }
 
       final task = taskList.firstWhere(
         (task) => task.id == id,
-        orElse: () => TaskModel(
+        orElse:
+            () => Task(
+              id: id,
+              notificationId: 0,
+              title: '',
+              dueDate: DateTime.now(),
+              priority: TaskPriority.medium,
+              category: TaskCategory.other,
+            ),
+      );
+      return task;
+    },
+    orElse:
+        () => Task(
           id: id,
           notificationId: 0,
           title: '',
           dueDate: DateTime.now(),
+          priority: TaskPriority.medium,
+          category: TaskCategory.other,
         ),
-      );
-      return task;
-    },
-    orElse: () => TaskModel(id: id, notificationId: 0, title: '', dueDate: DateTime.now()),
   );
 }
+
+
