@@ -8,11 +8,13 @@ import '../../../../../domain/entities/subtask.dart';
 class SubtaskList extends ConsumerStatefulWidget {
   final List<Subtask> subtasks;
   final Function(List<Subtask>) onSubtasksChanged;
+  final bool isReadOnly;
 
   const SubtaskList({
     super.key,
     required this.subtasks,
     required this.onSubtasksChanged,
+    this.isReadOnly = false,
   });
 
   @override
@@ -109,7 +111,8 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
                 child: _SubtaskTile(
                   subtask: subtask,
                   onToggle: () => _toggleSubtask(index),
-                  onDelete: () => _deleteSubtask(index),
+                  onDelete:
+                      widget.isReadOnly ? null : () => _deleteSubtask(index),
                 ),
               );
             },
@@ -117,43 +120,45 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
           8.verticalSpace,
         ],
 
-        // Add subtask input
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _subtaskController,
-                decoration: InputDecoration(
-                  hintText: 'Add a subtask...',
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
+        if (!widget.isReadOnly) ...[
+          // Add subtask input
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _subtaskController,
+                  decoration: InputDecoration(
+                    hintText: 'Add a subtask...',
+                    hintStyle: TextStyle(color: Colors.grey[400]),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: Colors.grey[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                      borderSide: BorderSide(color: AppTheme.purple, width: 2),
+                    ),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: Colors.grey[300]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                    borderSide: BorderSide(color: AppTheme.purple, width: 2),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
+                  onSubmitted: (_) => _addSubtask(),
                 ),
-                onSubmitted: (_) => _addSubtask(),
               ),
-            ),
-            8.horizontalSpace,
-            IconButton(
-              onPressed: _addSubtask,
-              icon: Icon(Icons.add_circle, color: AppTheme.purple),
-              iconSize: 32.sp,
-            ),
-          ],
-        ),
+              8.horizontalSpace,
+              IconButton(
+                onPressed: _addSubtask,
+                icon: Icon(Icons.add_circle, color: AppTheme.purple),
+                iconSize: 32.sp,
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -162,7 +167,7 @@ class _SubtaskListState extends ConsumerState<SubtaskList> {
 class _SubtaskTile extends StatelessWidget {
   final Subtask subtask;
   final VoidCallback onToggle;
-  final VoidCallback onDelete;
+  final VoidCallback? onDelete;
 
   const _SubtaskTile({
     required this.subtask,
@@ -212,15 +217,20 @@ class _SubtaskTile extends StatelessWidget {
                     : TextDecoration.none,
           ),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete_outline, color: AppTheme.red, size: 20.sp),
-          onPressed: onDelete,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-        ),
+        trailing:
+            onDelete == null
+                ? null
+                : IconButton(
+                  icon: Icon(
+                    Icons.delete_outline,
+                    color: AppTheme.red,
+                    size: 20.sp,
+                  ),
+                  onPressed: onDelete,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
       ),
     );
   }
 }
-
-

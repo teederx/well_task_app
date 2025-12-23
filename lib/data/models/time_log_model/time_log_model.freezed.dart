@@ -211,8 +211,8 @@ return $default(_that.id,_that.startTime,_that.endTime,_that.duration,_that.note
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _TimeLogModel implements TimeLogModel {
   const _TimeLogModel({required this.id, required this.startTime, this.endTime, this.duration = 0, this.note});
   factory _TimeLogModel.fromJson(Map<String, dynamic> json) => _$TimeLogModelFromJson(json);

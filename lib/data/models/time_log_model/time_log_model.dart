@@ -5,6 +5,7 @@ part 'time_log_model.g.dart';
 
 @freezed
 abstract class TimeLogModel with _$TimeLogModel {
+  @JsonSerializable(explicitToJson: true)
   const factory TimeLogModel({
     required String id,
     required DateTime startTime,
@@ -16,5 +17,3 @@ abstract class TimeLogModel with _$TimeLogModel {
   factory TimeLogModel.fromJson(Map<String, dynamic> json) =>
       _$TimeLogModelFromJson(json);
 }
-
-

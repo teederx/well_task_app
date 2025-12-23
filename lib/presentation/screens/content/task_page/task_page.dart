@@ -11,7 +11,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:well_task_app/data/services/attachment_service.dart';
 import 'package:well_task_app/domain/entities/attachment.dart';
 import 'widgets/attachment_list_widget.dart';
-import 'package:well_task_app/core/utils/config/alarms_services.dart';
 import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
 import 'package:well_task_app/core/utils/constants/priority_constants.dart';
@@ -25,7 +24,8 @@ import 'package:well_task_app/domain/entities/subtask.dart';
 import 'package:well_task_app/domain/entities/time_log.dart';
 import 'widgets/time_tracker_widget.dart';
 
-final notificationService = AlarmServicesImpl();
+// Redundant notification service removed as it is handled by the repository
+// final notificationService = AlarmServicesImpl();
 
 class TaskPage extends ConsumerStatefulWidget {
   const TaskPage({super.key, this.id, required this.pageType});
@@ -204,30 +204,22 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     }
   }
 
-  void _scheduleTaskOrNot(bool value) {
-    if (value) {
-      notificationService.scheduleTaskNotification(
-        dateTime: dateTime,
-        id: id,
-        notificationId: notId,
-        title: _taskNameController.text,
-        desc: _taskDescriptionController.text,
-        context: context,
-        remind5MinEarly: _remind5MinEarly,
+  void _showSchedulingFeedback(bool scheduling) {
+    if (!scheduling) return; // Only show feedback when scheduling
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('Notification scheduled for ${formatTime(dateTime)}'),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
-    } else {
-      notificationService.cancelTaskNotification(
-        notificationId: notId,
-        dateTime: dateTime,
-        title: _taskNameController.text,
-        context: context,
-      );
-    }
   }
 
   void save() {
     if (_currentPageType == PageType.addTask) {
-      _scheduleTaskOrNot(_scheduleTask);
+      _showSchedulingFeedback(_scheduleTask);
       ref
           .read(taskListProvider.notifier)
           .addTask(
@@ -253,7 +245,7 @@ class _TaskPageState extends ConsumerState<TaskPage> {
           );
     } else if (_currentPageType == PageType.editTask ||
         _currentPageType == PageType.viewTask) {
-      _scheduleTaskOrNot(_scheduleTask);
+      _showSchedulingFeedback(_scheduleTask);
       ref
           .read(taskListProvider.notifier)
           .editTask(
@@ -425,30 +417,32 @@ class _TaskPageState extends ConsumerState<TaskPage> {
                   20.verticalSpace,
                 ],
                 // Subtasks
-                if (!isViewOnly) ...[
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 15.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(
-                        color: AppTheme.purple.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: SubtaskList(
-                      subtasks: _subtasks,
-                      onSubtasksChanged: (updatedSubtasks) {
-                        setState(() {
-                          _subtasks = updatedSubtasks;
-                        });
-                      },
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 15.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: AppTheme.purple.withValues(alpha: 0.2),
                     ),
                   ),
-                  20.verticalSpace,
-                ],
+                  child: SubtaskList(
+                    subtasks: _subtasks,
+                    isReadOnly: isViewOnly,
+                    onSubtasksChanged: (updatedSubtasks) {
+                      setState(() {
+                        _subtasks = updatedSubtasks;
+                      });
+                      if (isViewOnly) {
+                        save(); // Persistent toggle in view mode
+                      }
+                    },
+                  ),
+                ),
+                20.verticalSpace,
                 // Attachments
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -1015,5 +1009,3 @@ class _TaskPageState extends ConsumerState<TaskPage> {
     );
   }
 }
-
-

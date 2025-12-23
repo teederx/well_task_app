@@ -210,8 +210,8 @@ return $default(_that.id,_that.title,_that.isCompleted,_that.createdAt,_that.com
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _SubtaskModel implements SubtaskModel {
   const _SubtaskModel({required this.id, required this.title, this.isCompleted = false, required this.createdAt, this.completedAt});
   factory _SubtaskModel.fromJson(Map<String, dynamic> json) => _$SubtaskModelFromJson(json);

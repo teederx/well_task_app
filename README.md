@@ -1,53 +1,47 @@
-# WellTask - Advanced Productivity App
+# WellTask - Advanced Productivity Ecosystem
 
-WellTask is a feature-rich Flutter application designed to help users organize tasks, track time, and improve productivity with AI-powered insights.
+WellTask is a high-performance, feature-rich productivity suite built with Flutter. It combines a beautiful, responsive user interface with a robust, reactive architecture designed for maximum reliability and snappy performance.
 
-## 🚀 Features
+## ✨ Premium Features
 
-### ✅ Core Task Management
--   **Create, Read, Update, Delete (CRUD)** tasks.
--   **Categorization**: Organize by Work, Personal, Health, Study, etc.
--   **Prioritization**: Low, Medium, High priority levels with visual indicators.
--   **Tags**: Add custom tags for flexible filtering.
--   **Subtasks**: Break down complex tasks into manageable steps.
--   **Recurring Tasks**: Set tasks to repeat daily, weekly, or monthly.
+### ✅ Professional Task Management
+-   **Optimistic UI Engine**: Experience zero-latency. Deleting tasks, toggling completion, and updating alarms reflect instantly in the UI, even while background synchronization is in progress.
+-   **Granular Subtasks**: Break complex workflows into manageable checklists with progress tracking and instant cloud-sync.
+-   **Smart Recurring Engine**: Flexible scheduling for daily, weekly, or monthly tasks.
+-   **High-Fidelity Metadata**: Categorize with smart tags, priorities (Low, Medium, High), and thematic categories (Work, Personal, Health, Study, etc.).
 
-### ⏱️ Productivity Tools
--   **Time Tracking**: Built-in timer to log time spent on specific tasks.
--   **Statistics Dashboard**: Visualize completion rates, focus time, and weekly activity.
--   **Calendar View**: Drag-and-drop tasks (coming soon) and view deadlines by month/week.
+### ⏱️ Productivity & Analytics
+-   **Focus Time Tracking**: Integrated Pomodoro-style timer to log precision focus sessions per task.
+-   **Insights Dashboard**: Dynamic visualization of your focus time, completion velocity, and weekly trends.
+-   **AI Productivity Score**: Powered by Google Gemini, get a personalized efficiency rating based on your historical patterns and priority handling.
 
-### 🤖 AI-Powered Insights
--   **Gemini Integration**: Uses Google Gemini AI to analyze your task list.
--   **Productivity Score**: Get a calculated score based on your completion history and priority handling.
--   **Smart Recommendations**: tailored advice to improve your workflow.
+### 🤖 AI-Powered Intelligence
+-   **Gemini Integration**: Large language model analysis of your productivity habits.
+-   **Smart Coaching**: tailored advice and workflow optimizations delivered directly to your insights feed.
 
-### 📎 Media & Attachments
--   **File Support**: Attach images and documents to tasks.
--   **Offline Persistence**: Attachments are stored locally for quick access.
+### 🔔 Reliable Notifications & Offline Resilience
+-   **Killed-State Alarms**: Engineered to trigger reliably even if the app is closed or the device is rebooted.
+-   **Multi-Stage Reminders**: Standard due-date alarms plus a configurable "5-minute warning".
+-   **Offline-First Persistence**: Powered by Hive for instantaneous local reads. All changes are queued and automatically synced to Firebase Firestore when connectivity is restored.
+-   **Auth-Synced Architecture**: A fully reactive provider chain ensures that data loads sync perfectly with your login state, eliminating "no user" race conditions.
 
-### 🔔 Notifications & Offline Support
--   **Smart Reminders**: Schedule alarms and get "5-minute before" warnings.
--   **Offline Mode**: Full functionality without internet; syncs automatically when online.
--   **Connectivity Indicator**: Visual feedback when network is lost.
+## 🛠️ Advanced Tech Stack
 
-### 🎨 UI/UX
--   **Modern Design**: Clean aesthetics with `flutter_screenutil` for responsiveness.
--   **Haptic Feedback**: Tactile response for interactions.
--   **Animations**: Smooth transitions using `flutter_animate` and custom implementations.
+-   **Frontend**: Flutter (3.x) with `flutter_screenutil` for pixel-perfect responsiveness.
+-   **State Management**: **Riverpod** using code-generation for a strictly typed, reactive dependency tree.
+-   **Local Storage**: **Hive** for high-speed NoSQL persistence.
+-   **Backend**: **Firebase** (Authentication & Cloud Firestore).
+-   **Architecture**: **Clean Architecture** (Separated Domain, Data, and Presentation layers) to ensure testability and scalability.
+-   **Navigation**: **GoRouter** for declarative, deep-linkable routing.
 
-## 🛠️ Tech Stack
+## 🚀 Getting Started
 
--   **Framework**: Flutter
--   **Language**: Dart
--   **State Management**: Riverpod (Code Generation)
--   **Local Database**: Hive
--   **Backend/Auth**: Firebase (Auth, Firestore)
--   **AI**: Google Generative AI SDK
--   **Navigation**: GoRouter
--   **Architecture**: Clean Architecture (Data, Domain, Presentation layers)
+### Prerequisites
+- Flutter SDK (latest stable)
+- A Firebase project with Auth and Firestore enabled
+- Google Gemini API Key
 
-## 📦 Installation
+### Installation
 
 1.  **Clone the repository:**
     ```bash
@@ -55,59 +49,53 @@ WellTask is a feature-rich Flutter application designed to help users organize t
     cd well_task_app
     ```
 
-2.  **Install dependencies:**
+2.  **Environment Setup:**
+    Create a `.env` file in the root directory and add:
+    ```env
+    GEMINI_API_KEY=your_gemini_api_key_here
+    ```
+
+3.  **Dependency Installation & Code Gen:**
     ```bash
     flutter pub get
-    ```
-
-3.  **Setup Environment:**
-    -   Create a `.env` file in the root.
-    -   Add your Gemini API Key:
-        ```env
-        GEMINI_API_KEY=your_api_key_here
-        ```
-
-4.  **Run Code Generation:**
-    ```bash
     flutter pub run build_runner build --delete-conflicting-outputs
     ```
+
+4.  **Firebase Configuration:**
+    Ensure your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) are correctly placed, or use `flutterfire configure`.
 
 5.  **Run the App:**
     ```bash
     flutter run
     ```
 
-## 🧪 Testing
+## 📂 Architecture Overview
 
-The project includes a suite of tests:
-
--   **Unit Tests**: `flutter test test/models`
--   **Widget Tests**: `flutter test test/widgets`
--   **Provider Tests**: `flutter test test/providers`
--   **Integration Tests**: `flutter test integration_test/app_test.dart`
-
-## 📂 Project Structure
-
-```
+```text
 lib/
+├── core/
+│   ├── usecase/         # Usecase base classes
+│   ├── errors/          # Custom failures and exceptions
+│   └── utils/           # Shared configurations (Router, Haptics, Themes)
 ├── data/
-│   ├── models/       # Data models (Freezed)
-│   ├── services/     # API clients, Local Storage, Notification Service
-│   └── repositories/ # Data access abstraction
+│   ├── models/          # Data models with Freezed/JsonSerializable
+│   ├── data_sources/    # Firebase configurations
+│   └── repositories/    # API and Local DB implementations
+├── domain/
+│   ├── entities/        # Pure business objects
+│   └── repositories/    # Abstract interfaces
+│   └── usecases/        # Business logic units
 ├── presentation/
-│   ├── providers/    # Riverpod providers
-│   ├── screens/      # UI Screens (TaskPage, InsightsPage, etc.)
-│   └── widgets/      # Reusable UI components
-├── utils/
-│   ├── config/       # Router, Theme, Date Formatting
-│   └── constants/    # Colors, Strings
-└── main.dart         # App Entry Point
+│   ├── providers/       # Reactive state providers
+│   ├── screens/         # Feature-specific UI screens
+│   └── widgets/         # Atomic UI components
+└── main.dart            # Multi-zoned app entry
 ```
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+Distributed under the MIT License. See `LICENSE` for more information.

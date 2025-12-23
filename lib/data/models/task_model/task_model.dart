@@ -12,6 +12,7 @@ const Uuid uuid = Uuid();
 
 @freezed
 abstract class TaskModel with _$TaskModel {
+  @JsonSerializable(explicitToJson: true)
   const factory TaskModel({
     required String id,
     required int notificationId,
@@ -79,5 +80,3 @@ abstract class TaskModel with _$TaskModel {
     );
   }
 }
-
-

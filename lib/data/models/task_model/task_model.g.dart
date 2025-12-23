@@ -66,12 +66,12 @@ Map<String, dynamic> _$TaskModelToJson(_TaskModel instance) =>
       'tags': instance.tags,
       'recurringType': _$RecurringTypeEnumMap[instance.recurringType]!,
       'recurringInterval': instance.recurringInterval,
-      'subtasks': instance.subtasks,
+      'subtasks': instance.subtasks.map((e) => e.toJson()).toList(),
       'totalTimeSpent': instance.totalTimeSpent,
-      'timeLogs': instance.timeLogs,
+      'timeLogs': instance.timeLogs.map((e) => e.toJson()).toList(),
       'timerStartedAt': instance.timerStartedAt?.toIso8601String(),
       'isTimerRunning': instance.isTimerRunning,
-      'attachments': instance.attachments,
+      'attachments': instance.attachments.map((e) => e.toJson()).toList(),
     };
 
 const _$TaskPriorityEnumMap = {

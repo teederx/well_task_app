@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:well_task_app/presentation/screens/content/task_page/task_page.dart';
 
 import '../../../../../domain/entities/task.dart';
-import 'package:well_task_app/core/utils/config/alarms_services.dart';
 import 'package:well_task_app/core/utils/config/formatted_date_time.dart';
 import 'package:well_task_app/core/utils/config/show_confirm_dialog.dart';
 import 'package:well_task_app/core/utils/constants/app_theme.dart';
@@ -17,8 +16,6 @@ import 'empty_state_widget.dart';
 import 'show_custom_dialog.dart';
 import 'task_formats.dart';
 import 'tile_animation.dart';
-
-final notificationService = AlarmServicesImpl();
 
 class AllTasks extends ConsumerWidget {
   const AllTasks({
@@ -80,10 +77,10 @@ class AllTasks extends ConsumerWidget {
             dateTime: task.dueDate,
             isCompleted: task.isCompleted,
             priority: task.priority,
+            subtasks: task.subtasks,
             onTap: () {
               HapticFeedback.lightImpact();
               ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
-              //Todo: Cancel alarm if task is done (take in value of iscompleted) a provider would be best for this
             },
             handleMenuSelection: (String value) {
               if (value == 'view') {
@@ -100,12 +97,6 @@ class AllTasks extends ConsumerWidget {
                   onYes: () {
                     HapticFeedback.mediumImpact();
                     ref.read(taskListProvider.notifier).removeTask(id: task.id);
-                    notificationService.cancelTaskNotification(
-                      notificationId: task.notificationId,
-                      dateTime: task.dueDate,
-                      title: task.title,
-                      context: context,
-                    );
                     ScaffoldMessenger.of(context).removeCurrentSnackBar();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -160,7 +151,8 @@ class AllTasksSliver extends ConsumerWidget {
                   iconColor: AppTheme.purple,
                   iconSize: 100.sp,
                   title: 'No Tasks for ${formatShortDate(selectedDate)}',
-                  subtitle: 'Create a new task to get started and stay productive',
+                  subtitle:
+                      'Create a new task to get started and stay productive',
                   buttonText: 'Add Task',
                   onButtonPressed: () {
                     showCustomDialog(
@@ -174,66 +166,57 @@ class AllTasksSliver extends ConsumerWidget {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final task = filteredTasks[index];
-          return Padding(
-            padding: EdgeInsets.only(bottom: 10.h),
-            child: TilesAnimation(
-              index: index,
-              child: AllTasksTile(
-                id: task.id,
-                title: task.title,
-                description: task.description ?? '',
-                dateTime: task.dueDate,
-                isCompleted: task.isCompleted,
-                priority: task.priority,
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
-                  //Todo: Cancel alarm if task is done (take in value of iscompleted) a provider would be best for this
-                },
-                handleMenuSelection: (String value) {
-                  if (value == 'view') {
-                    showCustomDialog(
-                      context: context,
-                      barrierLabel: 'View Task',
-                      child: TaskPage(pageType: PageType.viewTask, id: task.id),
-                    );
-                  } else if (value == 'delete') {
-                    showConfirmDialog(
-                      context: context,
-                      title: 'Delete Task',
-                      message: 'Are you sure you want to delete this task?',
-                      onYes: () {
-                        HapticFeedback.mediumImpact();
-                        ref.read(taskListProvider.notifier).removeTask(id: task.id);
-                        notificationService.cancelTaskNotification(
-                          notificationId: task.notificationId,
-                          dateTime: task.dueDate,
-                          title: task.title,
-                          context: context,
-                        );
-                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            duration: Duration(seconds: 1),
-                            behavior: SnackBarBehavior.floating,
-                            content: Text('Task deleted successfully'),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                },
-              ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final task = filteredTasks[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: 10.h),
+          child: TilesAnimation(
+            index: index,
+            child: AllTasksTile(
+              id: task.id,
+              title: task.title,
+              description: task.description ?? '',
+              dateTime: task.dueDate,
+              isCompleted: task.isCompleted,
+              priority: task.priority,
+              subtasks: task.subtasks,
+              onTap: () {
+                HapticFeedback.lightImpact();
+                ref.read(taskListProvider.notifier).toggleComplete(id: task.id);
+              },
+              handleMenuSelection: (String value) {
+                if (value == 'view') {
+                  showCustomDialog(
+                    context: context,
+                    barrierLabel: 'View Task',
+                    child: TaskPage(pageType: PageType.viewTask, id: task.id),
+                  );
+                } else if (value == 'delete') {
+                  showConfirmDialog(
+                    context: context,
+                    title: 'Delete Task',
+                    message: 'Are you sure you want to delete this task?',
+                    onYes: () {
+                      HapticFeedback.mediumImpact();
+                      ref
+                          .read(taskListProvider.notifier)
+                          .removeTask(id: task.id);
+                      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          duration: Duration(seconds: 1),
+                          behavior: SnackBarBehavior.floating,
+                          content: Text('Task deleted successfully'),
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
             ),
-          );
-        },
-        childCount: filteredTasks.length,
-      ),
+          ),
+        );
+      }, childCount: filteredTasks.length),
     );
   }
 }
-
-

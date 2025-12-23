@@ -6,7 +6,7 @@ part of 'connectivity_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$isOfflineHash() => r'aefda90cf427aa21a7737078144a5aa059ffd60a';
+String _$isOfflineHash() => r'878d35421c6fdce91fe3dc757a727417c33b9316';
 
 /// See also [isOffline].
 @ProviderFor(isOffline)

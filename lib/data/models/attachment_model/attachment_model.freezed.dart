@@ -211,8 +211,8 @@ return $default(_that.id,_that.fileName,_that.filePath,_that.fileType,_that.file
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _AttachmentModel implements AttachmentModel {
   const _AttachmentModel({required this.id, required this.fileName, required this.filePath, required this.fileType, required this.fileSize, required this.uploadedAt});
   factory _AttachmentModel.fromJson(Map<String, dynamic> json) => _$AttachmentModelFromJson(json);

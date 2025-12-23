@@ -8,20 +8,14 @@ part 'user_provider.g.dart';
 @riverpod
 class User extends _$User {
   @override
-  FutureOr<AppUserModel> build() {
-    return getAppUser();
+  FutureOr<AppUserModel> build() async {
+    final userRepo = ref.watch(userRepositoryProvider);
+    final getUserUsecase = GetUserUsecase(userRepo);
+    return await getUserUsecase.call();
   }
 
+  // Deprecated: build handles loading now
   Future<AppUserModel> getAppUser() async {
-    state = AsyncLoading();
-
-    final userRepo = ref.read(userRepositoryProvider);
-    final getUserUsecase = GetUserUsecase(userRepo);
-
-    state = await AsyncValue.guard(() => getUserUsecase.call());
-
-    return state.value!;
+    return await build();
   }
 }
-
-

@@ -6,6 +6,7 @@ part 'subtask_model.g.dart';
 /// Model for task subtasks/checklist items
 @freezed
 abstract class SubtaskModel with _$SubtaskModel {
+  @JsonSerializable(explicitToJson: true)
   const factory SubtaskModel({
     required String id,
     required String title,
@@ -17,5 +18,3 @@ abstract class SubtaskModel with _$SubtaskModel {
   factory SubtaskModel.fromJson(Map<String, dynamic> json) =>
       _$SubtaskModelFromJson(json);
 }
-
-

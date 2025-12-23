@@ -18,9 +18,11 @@ import '../../mappers/task_mapper.dart';
 import '../../models/task_model/task_model.dart';
 
 class TasksRepositoryImpl implements TasksRepository {
+  final String userId;
+
+  TasksRepositoryImpl({required this.userId});
+
   Future<Box> get _taskBox async {
-    final userId = fbAuth.currentUser?.uid;
-    if (userId == null) throw Exception("User not authenticated");
     if (!Hive.isBoxOpen('Tasks_$userId')) {
       await Hive.openBox('Tasks_$userId');
     }
@@ -28,13 +30,26 @@ class TasksRepositoryImpl implements TasksRepository {
   }
 
   CollectionReference get _firestoreTasks {
-    final userId = fbAuth.currentUser?.uid;
-    if (userId == null) throw Exception("User not authenticated");
     return usersCollection.doc(userId).collection('tasks');
   }
 
   final LocalNotificationService _notificationService =
       LocalNotificationService();
+
+  Map<String, dynamic> _recursiveCast(Map<dynamic, dynamic> map) {
+    return map.map((key, value) {
+      final stringKey = key.toString();
+      if (value is Map) {
+        return MapEntry(stringKey, _recursiveCast(value));
+      } else if (value is List) {
+        return MapEntry(
+          stringKey,
+          value.map((e) => e is Map ? _recursiveCast(e) : e).toList(),
+        );
+      }
+      return MapEntry(stringKey, value);
+    });
+  }
 
   @override
   Future<Either<Failure, void>> addTask({required Task task}) async {
@@ -103,9 +118,8 @@ class TasksRepositoryImpl implements TasksRepository {
       final taskMap = box.get(id);
 
       if (taskMap != null) {
-        final oldTaskModel = TaskModel.fromJson(
-          Map<String, dynamic>.from(taskMap),
-        );
+        final taskMapCast = _recursiveCast(Map<dynamic, dynamic>.from(taskMap));
+        final oldTaskModel = TaskModel.fromJson(taskMapCast);
 
         // Reconstruct the Task Entity with new values
         final newTaskEntity = Task(
@@ -186,11 +200,16 @@ class TasksRepositoryImpl implements TasksRepository {
       // Trigger background sync
       _syncFromFirestore();
 
-      final tasks =
-          box.values
-              .map((e) => TaskModel.fromJson(Map<String, dynamic>.from(e)))
-              .map((model) => model.toEntity())
-              .toList();
+      final tasks = <Task>[];
+      for (var e in box.values) {
+        try {
+          final castedMap = _recursiveCast(Map<dynamic, dynamic>.from(e));
+          final model = TaskModel.fromJson(castedMap);
+          tasks.add(model.toEntity());
+        } catch (err) {
+          debugPrint('⚠️ Error deserializing a task, skipping: $err');
+        }
+      }
 
       return Right(tasks);
     } catch (e) {
@@ -219,7 +238,8 @@ class TasksRepositoryImpl implements TasksRepository {
       final box = await _taskBox;
       final taskMap = box.get(id);
       if (taskMap != null) {
-        final task = TaskModel.fromJson(Map<String, dynamic>.from(taskMap));
+        final taskMapCast = _recursiveCast(Map<dynamic, dynamic>.from(taskMap));
+        final task = TaskModel.fromJson(taskMapCast);
         await _notificationService.cancelNotification(task.notificationId);
         await _notificationService.cancelNotification(
           task.notificationId + 100000,
@@ -245,9 +265,10 @@ class TasksRepositoryImpl implements TasksRepository {
       final box = await _taskBox;
       final taskMap = box.get(id);
       if (taskMap != null) {
-        final newValue = !taskMap['isCompleted'];
-        taskMap['isCompleted'] = newValue;
-        await box.put(id, taskMap);
+        final taskMapCast = _recursiveCast(Map<dynamic, dynamic>.from(taskMap));
+        final newValue = !taskMapCast['isCompleted'];
+        taskMapCast['isCompleted'] = newValue;
+        await box.put(id, taskMapCast);
 
         try {
           await _firestoreTasks.doc(id).update({'isCompleted': newValue});
@@ -257,9 +278,7 @@ class TasksRepositoryImpl implements TasksRepository {
 
         // Cancel notification if completed
         if (newValue) {
-          final taskModel = TaskModel.fromJson(
-            Map<String, dynamic>.from(taskMap),
-          );
+          final taskModel = TaskModel.fromJson(taskMapCast);
           await _notificationService.cancelNotification(
             taskModel.notificationId,
           );
@@ -346,9 +365,10 @@ class TasksRepositoryImpl implements TasksRepository {
       final box = await _taskBox;
       final taskMap = box.get(id);
       if (taskMap != null) {
-        final newValue = !taskMap['alarmSet'];
-        taskMap['alarmSet'] = newValue;
-        await box.put(id, taskMap);
+        final taskMapCast = _recursiveCast(Map<dynamic, dynamic>.from(taskMap));
+        final newValue = !taskMapCast['alarmSet'];
+        taskMapCast['alarmSet'] = newValue;
+        await box.put(id, taskMapCast);
 
         try {
           await _firestoreTasks.doc(id).update({'alarmSet': newValue});
@@ -356,9 +376,7 @@ class TasksRepositoryImpl implements TasksRepository {
           debugPrint('Firestore sync failed: $e');
         }
 
-        final taskModel = TaskModel.fromJson(
-          Map<String, dynamic>.from(taskMap),
-        );
+        final taskModel = TaskModel.fromJson(taskMapCast);
         final task = taskModel.toEntity();
 
         if (newValue) {
@@ -442,5 +460,3 @@ class TasksRepositoryImpl implements TasksRepository {
     });
   }
 }
-
-

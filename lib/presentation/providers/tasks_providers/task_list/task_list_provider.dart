@@ -20,7 +20,7 @@ const uuid = Uuid();
 class TaskList extends _$TaskList {
   @override
   Future<List<Task>> build() async {
-    final getTasks = ref.read(getTasksUseCaseProvider);
+    final getTasks = ref.watch(getTasksUseCaseProvider);
     final result = await getTasks(NoParams());
     return result.fold((failure) {
       debugPrint('TaskList build error: ${failure.message}');
@@ -125,31 +125,52 @@ class TaskList extends _$TaskList {
   }
 
   Future<void> removeTask({required String id}) async {
+    final previousState = await future;
+    state = AsyncData(previousState.where((task) => task.id != id).toList());
+
     final removeTask = ref.read(removeTaskUseCaseProvider);
     final result = await removeTask(id);
-    result.fold(
-      (failure) => debugPrint('Remove task failed: ${failure.message}'),
-      (_) => ref.invalidateSelf(),
-    );
+    result.fold((failure) {
+      debugPrint('Remove task failed: ${failure.message}');
+      state = AsyncData(previousState);
+    }, (_) => ref.invalidateSelf());
   }
 
   Future<void> toggleComplete({required String id}) async {
+    final previousState = await future;
+    state = AsyncData(
+      previousState.map((task) {
+        if (task.id == id) {
+          return task.copyWith(isCompleted: !task.isCompleted);
+        }
+        return task;
+      }).toList(),
+    );
+
     final toggleComplete = ref.read(toggleCompleteUseCaseProvider);
     final result = await toggleComplete(id);
-    result.fold(
-      (failure) => debugPrint('Toggle complete failed: ${failure.message}'),
-      (_) => ref.invalidateSelf(),
-    );
+    result.fold((failure) {
+      debugPrint('Toggle complete failed: ${failure.message}');
+      state = AsyncData(previousState);
+    }, (_) => ref.invalidateSelf());
   }
 
   Future<void> toggleAlarm({required String id}) async {
+    final previousState = await future;
+    state = AsyncData(
+      previousState.map((task) {
+        if (task.id == id) {
+          return task.copyWith(alarmSet: !task.alarmSet);
+        }
+        return task;
+      }).toList(),
+    );
+
     final toggleAlarm = ref.read(toggleAlarmUseCaseProvider);
     final result = await toggleAlarm(id);
-    result.fold(
-      (failure) => debugPrint('Toggle alarm failed: ${failure.message}'),
-      (_) => ref.invalidateSelf(),
-    );
+    result.fold((failure) {
+      debugPrint('Toggle alarm failed: ${failure.message}');
+      state = AsyncData(previousState);
+    }, (_) => ref.invalidateSelf());
   }
 }
-
-
